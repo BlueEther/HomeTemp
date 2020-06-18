@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style type="text/css">
+ canvas {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+.row { 
+	display: flex;
+  justify-content: flex-start
+}
+
+  .column {
+    width: 75%;
+	padding:10;
+
+}
+H2{
+	text-align: center
+}
+</style>
+  <title>Gauge Chart</title>
+  <script src="https://unpkg.com/chart.js@2.8.0/dist/Chart.bundle.js"></script>
+  <script src="https://unpkg.com/chartjs-gauge@0.2.0/dist/chartjs-gauge.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.7.0/d3.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@0.7.4"></script>
+  <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
+ 
+</head>
+
+<body><h2 > Home Temps</h2>
+
+
+  <div id="canvas-holder" class="row">
+    <div class="column" >
+	<canvas id="gaugeCeiling" width="200" height="200"></canvas>
+    </div>
+  <div class="column" >
+  <canvas id="gaugeLounge"  width="200" height="200"></canvas>
+  </div>
+  <div class="column" >
+  <canvas id="gaugeBC"  width="200" height="200"></canvas>
+  </div>
+  <div class="column" >
+  <canvas id="gaugeBI"  width="200" height="200"></canvas>
+  </div>
+  <div class="column" >
+  <canvas id="gaugeBM"  width="200" height="200"></canvas>
+  </div>
+  <div class="column" >
+  <canvas id="gaugeDeck"  width="200" height="200"></canvas>
+  </div>
+  <div class="column" >
+  <canvas id="gaugeAir"  width="200" height="200"></canvas>
+  </div>
+  </div>
+
+  <div  class="row">
+    <div class="column" >
+      <input type="radio" id="1h" name="timerange" value="temp60min.csv">
+      <label for="1h">Last 1 hour</label>
+    </div>    
+    <div class="column" >
+      <input type="radio" id="2h" name="timerange" value="temp2.csv">
+      <label for="2h">Last 2 hours</label>
+    </div>
+    <div  class="column">
+      <input type="radio" id="6h" name="timerange" value="temp6.csv">
+      <label for="6h">Last 6 hours</label>
+    </div>
+    <div  class="column">
+      <input type="radio" id="12h" name="timerange" value="temp12.csv">
+      <label for="12h">Last 12 hours</label>
+    </div>
+  <div class="column">
+    <input type="radio" id="24h" name="timerange" value="temp24.csv" checked>
+    <label for="24h">Last 24 hours</label>
+  </div>
+  <div class="column">
+    <input type="radio" id="48h" name="timerange" value="temp48.csv" >
+    <label for="48h">Last 48 hours</label>
+  </div>
+  <div class="column">
+    <input type="radio" id="all" name="timerange" value="temp.csv">
+    <label for="all">All recorded temperature readings <br>(may take a long time to load)</label>
+  </div>
+  </div>
+
+  <div id="chart-wrapper" height="450">
+  <canvas id="chartHouse" height="450"></canvas>
+</div>
+<div id="chart-wrapper" height="450">
+  <canvas id="chartOutside" height="450"></canvas>
+</div>
+
+ <script  type="text/javascript">
+  
+var data = [5,10,15,20,25,30,35];//randomData();
+var aLength =0;
+var updateCounter = 0;
+
+function updateChart(temps) { 
+
+	timeStamp 	= temps.map(function(d) {return d.Time});
+	DeckTemp 	= temps.map(function(d) {return +d.Deck});
+	BaseTemp 	= temps.map(function(d) {return +d.BaseStation});
+	G_aTemp 	= temps.map(function(d) {return +d.Ground_air});
+	G_30Temp 	= temps.map(function(d) {return +d.Ground_30cm});
+	BedCTemp 	= temps.map(function(d) {return +d.Bed_Cady});
+	BedITemp 	= temps.map(function(d) {return +d.Bed_Ismay});
+	BedMTemp 	= temps.map(function(d) {return +d.Bed_Master});
+	CeilingTemp = temps.map(function(d) {return +d.Ceiling});
+	LoungeTemp 	= temps.map(function(d) {return +d.Lounge});
+	
+	lastDeck = DeckTemp[DeckTemp.length - 1].toFixed(1);
+	lastBase = BaseTemp[BaseTemp.length - 1].toFixed(1);
+	lastAir = G_aTemp[G_aTemp.length - 1].toFixed(1);
+	lastSoil = G_30Temp[G_30Temp.length - 1].toFixed(1);
+	lastBC = BedCTemp[BedCTemp.length - 1].toFixed(1);
+	lastBI = BedITemp[BedITemp.length - 1].toFixed(1);
+	lastBM = BedMTemp[BedMTemp.length - 1].toFixed(1);
+	lastCeiling = CeilingTemp[CeilingTemp.length - 1].toFixed(1);
+	lastLounge = LoungeTemp[LoungeTemp.length - 1].toFixed(1);
+
+	gaugeDeck.data.datasets[0].value 	= lastDeck;
+	gaugeAir.data.datasets[0].value 	= lastAir;
+	gaugeBC.data.datasets[0].value 		= lastBC;
+	gaugeBI.data.datasets[0].value 		= lastBI;
+	gaugeBM.data.datasets[0].value 		= lastBM;
+	gaugeCeiling.data.datasets[0].value = lastCeiling;
+	gaugeLounge.data.datasets[0].value 	= lastLounge;
+	//gaugeBase.data.datasets[0].value = BaseTemp[BaseTemp.length - 1].toFixed(1);
+	//gaugeSoil.data.datasets[0].value = G_30Temp[G_30Temp.length - 1].toFixed(1);
+	
+	//console.log(chartHouse.data.datasets[0].data[0]);  -->
+	//console.log(CeilingTemp);  -->
+
+	chartHouse.data.labels = timeStamp;
+	chartHouse.data.datasets[0].data = CeilingTemp;
+	chartHouse.data.datasets[0].label = 'Ceiling '+lastCeiling;
+	chartHouse.data.datasets[1].data = LoungeTemp;
+	chartHouse.data.datasets[1].label = 'Lounge '+lastLounge;
+	chartHouse.data.datasets[2].data = BedCTemp;
+	chartHouse.data.datasets[2].label = 'Cady\s Bed '+lastBC;
+	chartHouse.data.datasets[3].data = BedITemp;
+	chartHouse.data.datasets[3].label = 'Ismay\s Bed '+lastBI;
+	chartHouse.data.datasets[4].data = BedMTemp;
+	chartHouse.data.datasets[4].label = 'Master Bed '+lastBM;
+	
+	chartOutside.data.labels = timeStamp;
+	chartOutside.data.datasets[0].data = DeckTemp;
+	chartOutside.data.datasets[2].label = 'Deck '+lastDeck
+	chartOutside.data.datasets[1].data = G_aTemp;
+	chartOutside.data.datasets[2].label = 'Air '+lastAir
+	chartOutside.data.datasets[2].data = G_30Temp;
+	chartOutside.data.datasets[2].label = 'Soil '+lastSoil
+	
+	chartHouse.update();
+	chartOutside.update();
+
+	gaugeDeck.update();
+	gaugeAir.update();
+	gaugeBC.update();
+	gaugeBI.update();
+	gaugeBM.update();
+	gaugeCeiling.update();
+	gaugeLounge.update();
+	//gaugeBase.update();
+	//gaugeSoil.update();
+
+
+	updateCounter++
+	//console.log(updateCounter);
+}  
+
+
+
+function makeChart(temps) { 
+
+	//console.log(temps);
+  window.timeStamp 		= temps.map(function(d) {return d.Time});
+  window.DeckTemp 		= temps.map(function(d) {return +d.Deck});
+  window.BaseTemp 		= temps.map(function(d) {return +d.BaseStation});
+  window.G_aTemp 		= temps.map(function(d) {return +d.Ground_air});
+  window.G_30Temp 		= temps.map(function(d) {return +d.Ground_30cm});
+  window.BedCTemp 		= temps.map(function(d) {return +d.Bed_Cady});
+  window.BedITemp 		= temps.map(function(d) {return +d.Bed_Ismay});
+  window.BedMTemp 		= temps.map(function(d) {return +d.Bed_Master});
+  window.CeilingTemp 	= temps.map(function(d) {return +d.Ceiling});
+  window.LoungeTemp 	= temps.map(function(d) {return +d.Lounge});
+    
+  window.lastDeck = DeckTemp[DeckTemp.length - 1].toFixed(1);
+  window.lastBase = BaseTemp[BaseTemp.length - 1].toFixed(1);
+  window.lastAir = G_aTemp[G_aTemp.length - 1].toFixed(1);
+  window.lastSoil = G_30Temp[G_30Temp.length - 1].toFixed(1);
+  window.lastBC = BedCTemp[BedCTemp.length - 1].toFixed(1);
+  window.lastBI = BedITemp[BedITemp.length - 1].toFixed(1);
+  window.lastBM = BedMTemp[BedMTemp.length - 1].toFixed(1);
+  window.lastCeiling = CeilingTemp[CeilingTemp.length - 1].toFixed(1);
+  window.lastLounge = LoungeTemp[LoungeTemp.length - 1].toFixed(1);
+  
+  window.gaugeDeck = new Chart('gaugeDeck', {
+  type: 'gauge',
+  data: {
+    //labels: ['Success', 'Warning', 'Warning', 'Error'],
+    datasets: [{
+      data: data,
+      value: lastDeck,
+      backgroundColor: ['rgb(26, 35, 126)','rgb(33, 150, 243)','rgb(0, 188, 212 )', 'rgb(76, 175, 80)', 'rgb(205, 220, 57)', 'rgb(255, 193, 7)', 'rgb(255, 87, 34)'],
+      borderWidth: 2
+    }]
+  },
+  options: {
+    responsive: true,
+    title: {
+      display: true,
+      text: 'Deck'
+    },
+    layout: {
+      padding: {
+        bottom: 30
+      }
+    },
+    needle: {
+      radiusPercentage: 2,
+      widthPercentage: 3.2,
+      lengthPercentage: 80,
+      color: 'rgba(0, 0, 0, 1)'
+    },
+    valueLabel: {
+      //formatter: Math.round,//Math.round,
+      fontSize: 18
+    }
+  }
+})
+  
+  window.gaugeBC = new Chart('gaugeBC', {
+  type: 'gauge',
+  data: {
+    datasets: [{
+      data: data,
+      value: lastBC,
+      backgroundColor: ['rgb(26, 35, 126)','rgb(33, 150, 243)','rgb(0, 188, 212 )', 'rgb(76, 175, 80)', 'rgb(205, 220, 57)', 'rgb(255, 193, 7)', 'rgb(255, 87, 34)'],
+      borderWidth: 2
+    }]
+  },
+  options: {
+    responsive: true,
+    title: {
+      display: true,
+      text: 'Cady\'s Bed'
+    },
+    layout: {
+      padding: {
+        bottom: 30
+      }
+    },
+    needle: {
+      radiusPercentage: 2,
+      widthPercentage: 3.2,
+      lengthPercentage: 80,
+      color: 'rgba(0, 0, 0, 1)'
+    },
+    valueLabel: {
+      //formatter: Math.round,//Math.round,
+      fontSize: 18
+    }
+  }
+})
+
+window.gaugeBI = new Chart('gaugeBI', {
+  type: 'gauge',
+  data: {
+    datasets: [{
+      data: data,
+      value: lastBI,
+      backgroundColor: ['rgb(26, 35, 126)','rgb(33, 150, 243)','rgb(0, 188, 212 )', 'rgb(76, 175, 80)', 'rgb(205, 220, 57)', 'rgb(255, 193, 7)', 'rgb(255, 87, 34)'],
+      borderWidth: 2
+    }]
+  },
+  options: {
+    responsive: true,
+    title: {
+      display: true,
+      text: 'Ismay\'s Bed'
+    },
+    layout: {
+      padding: {
+        bottom: 30
+      }
+    },
+    needle: {
+      radiusPercentage: 2,
+      widthPercentage: 3.2,
+      lengthPercentage: 80,
+      color: 'rgba(0, 0, 0, 1)'
+    },
+    valueLabel: {
+      //formatter: Math.round,//Math.round,
+      fontSize: 18
+    }
+  }
+})
+window.gaugeBM = new Chart('gaugeBM', {
+  type: 'gauge',
+  data: {
+    datasets: [{
+      data: data,
+      value: lastBM,
+      backgroundColor: ['rgb(26, 35, 126)','rgb(33, 150, 243)','rgb(0, 188, 212 )', 'rgb(76, 175, 80)', 'rgb(205, 220, 57)', 'rgb(255, 193, 7)', 'rgb(255, 87, 34)'],
+      borderWidth: 2
+    }]
+  },
+  options: {
+    responsive: true,
+    title: {
+      display: true,
+      text: 'Master Bed'
+    },
+    layout: {
+      padding: {
+        bottom: 30
+      }
+    },
+    needle: {
+      radiusPercentage: 2,
+      widthPercentage: 3.2,
+      lengthPercentage: 80,
+      color: 'rgba(0, 0, 0, 1)'
+    },
+    valueLabel: {
+      //formatter: Math.round,//Math.round,
+      fontSize: 18
+    }
+  }
+})
+
+window.gaugeCeiling = new Chart('gaugeCeiling', {
+  type: 'gauge',
+  data: {
+    datasets: [{
+      data: data,
+      value: lastCeiling,
+      backgroundColor: ['rgb(26, 35, 126)','rgb(33, 150, 243)','rgb(0, 188, 212 )', 'rgb(76, 175, 80)', 'rgb(205, 220, 57)', 'rgb(255, 193, 7)', 'rgb(255, 87, 34)'],
+      borderWidth: 2
+    }]
+  },
+  options: {
+    responsive: true,
+    title: {
+      display: true,
+      text: 'Ceiling'
+    },
+    layout: {
+      padding: {
+        bottom: 30
+      }
+    },
+    needle: {
+      radiusPercentage: 2,
+      widthPercentage: 3.2,
+      lengthPercentage: 80,
+      color: 'rgba(0, 0, 0, 1)'
+    },
+    valueLabel: {
+      //formatter: Math.round,//Math.round,
+      fontSize: 18
+    }
+  }
+})
+
+
+
+window.gaugeAir = new Chart('gaugeAir', {
+  type: 'gauge',
+  data: {
+    datasets: [{
+      data: data,
+      value: lastAir,
+      backgroundColor: ['rgb(26, 35, 126)','rgb(33, 150, 243)','rgb(0, 188, 212 )', 'rgb(76, 175, 80)', 'rgb(205, 220, 57)', 'rgb(255, 193, 7)', 'rgb(255, 87, 34)'],
+      borderWidth: 2
+    }]
+  },
+  options: {
+    responsive: true,
+    title: {
+      display: true,
+      text: 'Air'
+    },
+    layout: {
+      padding: {
+        bottom: 30
+      }
+    },
+    needle: {
+      radiusPercentage: 2,
+      widthPercentage: 3.2,
+      lengthPercentage: 80,
+      color: 'rgba(0, 0, 0, 1)'
+    },
+    valueLabel: {
+      //formatter: Math.round,//Math.round,
+      fontSize: 18
+    }
+  }
+})
+
+  window.gaugeLounge = new Chart('gaugeLounge', {
+  type: 'gauge',
+  data: {
+    datasets: [{
+      data: data,
+      value: lastLounge,
+      backgroundColor: ['rgb(26, 35, 126)','rgb(33, 150, 243)','rgb(0, 188, 212 )', 'rgb(76, 175, 80)', 'rgb(205, 220, 57)', 'rgb(255, 193, 7)', 'rgb(255, 87, 34)'],
+      borderWidth: 2
+    }]
+  },
+  options: {
+    responsive: true,
+    title: {
+      display: true,
+      text: 'Lounge'
+    },
+    layout: {
+      padding: {
+        bottom: 30
+      }
+    },
+    needle: {
+      radiusPercentage: 2,
+      widthPercentage: 3.2,
+      lengthPercentage: 80,
+      color: 'rgba(0, 0, 0, 1)'
+    },
+    valueLabel: {
+      //formatter: Math.round,//Math.round,
+      fontSize: 18
+    }
+  }
+})
+   
+   window.chartHouse = new Chart('chartHouse', {
+    type: 'line',
+    data: {
+      labels: timeStamp,
+      datasets: [
+        {data: CeilingTemp,
+        label: 'Ceiling '+lastCeiling,
+        fill: true,
+        backgroundColor:  ['rgba(74, 35, 90, 0.05)'],
+        borderColor:      ['rgba(74, 35, 90, 1)'],
+        borderWidth:1,
+        pointRadius:0,
+        },
+        {data: LoungeTemp,
+        label: 'Lounge '+lastLounge,
+        fill: true,
+        backgroundColor:  ['rgba(99, 57, 116, 0.05)'],
+        borderColor:      ['rgba(99, 57, 116, 1)'],
+        borderWidth:1,
+        pointRadius:0,
+        },
+        {data: BedCTemp,
+        label: 'Cady\'s Bed '+lastBC,
+        fill: true,
+        backgroundColor:  ['rgba(125, 60, 152, 0.05)'],
+        borderColor:      ['rgba(125, 60, 152, 1)'],
+        borderWidth:1,
+        pointRadius:0,
+        },
+        {data: BedITemp,
+        label: 'Ismay\'s Bed '+lastBI,
+        fill: true,
+        backgroundColor:  ['rgba(155, 89, 182, 0.05)'],
+        borderColor:      ['rgba(155, 89, 182, 1)'],
+        borderWidth:1,
+        pointRadius:0,
+        },
+        {data: BedMTemp,
+        label: 'Master Bed '+lastBM,
+        fill: true,
+        backgroundColor:  ['rgba(210, 180, 222, 0.05)'],
+        borderColor:      ['rgba(210, 180, 222, 1)'],
+        borderWidth:1,
+        pointRadius:0,
+        }
+      ]
+    },
+    options: {
+	title: {
+      display: true,
+      text: 'Inside',
+	  fontSize: 18
+    },
+      maintainAspectRatio: false,
+      legend: {
+        display: true,
+      },
+      scales: {
+        xAxes: [{
+            type: 'time',
+
+          distribution: 'linear',
+            ticks: {
+                source: 'date'},
+            
+          }
+        ]
+      },
+      plugins: {
+		zoom: {
+			pan: {
+				enabled: true,
+				mode: 'x'
+			},
+			zoom: {
+				enabled: true,
+				drag: true,
+				mode: 'x',
+				onZoom: function({chart}) { console.log(`Im zooming!!!`); },
+				onZoomComplete: function({chart}) { console.log(`I was zoomed!!!`);               }
+			}
+		}
+	}
+    },
+   })   
+   window.chartOutside = new Chart('chartOutside', {
+    type: 'line',
+    data: {
+      labels: timeStamp,
+      datasets: [
+        {data: DeckTemp,
+        label: 'Deck '+lastDeck,
+        fill: true,
+        backgroundColor:  ['rgba(133, 193, 233, 0.05)'],
+        borderColor:      ['rgba(133, 193, 233, 1)'],
+        borderWidth:1,
+        pointRadius:0,
+        },
+        {data: G_aTemp,
+        label: 'Air '+lastAir,
+        fill: true,
+        backgroundColor:  ['rgba(93, 173, 226, 0.05)'],
+        borderColor:      ['rgba(93, 173, 226, 1)'],
+        borderWidth:1,
+        pointRadius:0,
+        },
+        {data: G_30Temp,
+        label: 'Soil '+lastSoil,
+        fill: true,
+        backgroundColor:  ['rgba(248, 196, 113, 0.05)'],
+        borderColor:      ['rgba(248, 196, 113, 1)'],
+        borderWidth:1,
+        pointRadius:0,
+        }
+      ]
+    },
+    options: {
+		title: {
+      display: true,
+      text: 'Outside',
+	  fontSize: 18
+    },
+      maintainAspectRatio: false,
+      legend: {
+        display: true,
+      },
+      scales: {
+        xAxes: [{
+            type: 'time',
+
+          distribution: 'linear',
+            ticks: {
+                source: 'date'},
+            
+          }
+        ]
+      },
+      plugins: {
+		zoom: {
+			pan: {
+				enabled: true,
+				mode: 'x'
+			},
+			zoom: {
+				enabled: true,
+				drag: true,
+				mode: 'x',
+				onZoom: function({chart}) { console.log(`Im zooming!!!`); },
+				onZoomComplete: function({chart}) { console.log(`I was zoomed!!!`);               }
+			}
+		}
+	}
+    },
+   })
+   
+  
+   };
+
+// Request data using D3
+var defaultURL 	= 'https://fryett.net/HomeTemp/temp24.csv';
+var fetchURL	= defaultURL;
+
+function upChart(fetchURL){
+  d3.csv(fetchURL).then(updateChart);
+}
+
+d3.csv(defaultURL).then(makeChart);
+		
+d3.selectAll(("input[name='timerange']")).on("change", function(){
+      console.log(this.value);
+      fetchURL = 'https://fryett.net/HomeTemp/' + this.value;
+      console.log(fetchURL);
+      upChart(fetchURL);
+        });
+		
+var interC = setInterval(function() {
+            d3.csv(fetchURL).then(updateChart);
+        }, 30000);
+
+		
+</script>
+</body>
+</html>

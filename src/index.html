@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=Edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style type="text/css">
+  <style>
  canvas {
   -moz-user-select: none;
   -webkit-user-select: none;
@@ -17,7 +17,7 @@
 
   .column {
     width: 75%;
-	padding:10;
+	padding:10px;
 
 }
 H2{
@@ -91,14 +91,14 @@ H2{
   </div>
   </div>
 
-  <div id="chart-wrapper" height="450">
-  <canvas id="chartHouse" height="450"></canvas>
-</div>
-<div id="chart-wrapper" height="450">
+  <div id="chart-wrapperHouse" >
+        <canvas id="chartHouse" height="450"></canvas>
+    </div>
+<div id="chart-wrapperOutside" >
   <canvas id="chartOutside" height="450"></canvas>
 </div>
 
- <script  type="text/javascript">
+ <script>
   
 var data = [5,10,15,20,25,30,35];//randomData();
 var aLength =0;

@@ -21,7 +21,7 @@ const char* Hpassword = "iwillnotgiveyoumykey";    //   "" ditto
 #define AIO_SERVER      "io.adafruit.com"
 #define AIO_SERVERPORT  1883
 #define AIO_USERNAME    "blueether"
-#define AIO_KEY         "c52789769bea4a028579b5abc9923716"
+#define AIO_KEY         "1234567890987654321"
 
 #define AIO_SERVER_H      "10.1.1.56"
 #define AIO_SERVERPORT_H  1883

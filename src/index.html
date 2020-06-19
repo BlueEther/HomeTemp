@@ -28,7 +28,7 @@ H2{
   <script src="https://unpkg.com/chart.js@2.8.0/dist/Chart.bundle.js"></script>
   <script src="https://unpkg.com/chartjs-gauge@0.2.0/dist/chartjs-gauge.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.7.0/d3.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@0.7.4"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@0.7.6"></script>
   <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
  
 </head>
@@ -102,10 +102,13 @@ H2{
   
 var data = [5,10,15,20,25,30,35];//randomData();
 var aLength =0;
-var updateCounter = 0;
 
-function updateChart(temps) { 
+var updateCCounter = 0;
+var updateGCounter = 0;
 
+function updateCharts(temps) { 
+
+    var updateCounter;
 	timeStamp 	= temps.map(function(d) {return d.Time});
 	DeckTemp 	= temps.map(function(d) {return +d.Deck});
 	BaseTemp 	= temps.map(function(d) {return +d.BaseStation});
@@ -117,29 +120,6 @@ function updateChart(temps) {
 	CeilingTemp = temps.map(function(d) {return +d.Ceiling});
 	LoungeTemp 	= temps.map(function(d) {return +d.Lounge});
 	
-	lastDeck = DeckTemp[DeckTemp.length - 1].toFixed(1);
-	lastBase = BaseTemp[BaseTemp.length - 1].toFixed(1);
-	lastAir = G_aTemp[G_aTemp.length - 1].toFixed(1);
-	lastSoil = G_30Temp[G_30Temp.length - 1].toFixed(1);
-	lastBC = BedCTemp[BedCTemp.length - 1].toFixed(1);
-	lastBI = BedITemp[BedITemp.length - 1].toFixed(1);
-	lastBM = BedMTemp[BedMTemp.length - 1].toFixed(1);
-	lastCeiling = CeilingTemp[CeilingTemp.length - 1].toFixed(1);
-	lastLounge = LoungeTemp[LoungeTemp.length - 1].toFixed(1);
-
-	gaugeDeck.data.datasets[0].value 	= lastDeck;
-	gaugeAir.data.datasets[0].value 	= lastAir;
-	gaugeBC.data.datasets[0].value 		= lastBC;
-	gaugeBI.data.datasets[0].value 		= lastBI;
-	gaugeBM.data.datasets[0].value 		= lastBM;
-	gaugeCeiling.data.datasets[0].value = lastCeiling;
-	gaugeLounge.data.datasets[0].value 	= lastLounge;
-	//gaugeBase.data.datasets[0].value = BaseTemp[BaseTemp.length - 1].toFixed(1);
-	//gaugeSoil.data.datasets[0].value = G_30Temp[G_30Temp.length - 1].toFixed(1);
-	
-	//console.log(chartHouse.data.datasets[0].data[0]);  -->
-	//console.log(CeilingTemp);  -->
-
 	chartHouse.data.labels = timeStamp;
 	chartHouse.data.datasets[0].data = CeilingTemp;
 	chartHouse.data.datasets[0].label = 'Ceiling '+lastCeiling;
@@ -162,23 +142,56 @@ function updateChart(temps) {
 	
 	chartHouse.update();
 	chartOutside.update();
-
-	gaugeDeck.update();
-	gaugeAir.update();
-	gaugeBC.update();
-	gaugeBI.update();
-	gaugeBM.update();
-	gaugeCeiling.update();
-	gaugeLounge.update();
-	//gaugeBase.update();
-	//gaugeSoil.update();
-
-
-	updateCounter++
-	//console.log(updateCounter);
+updateCCounter++
+console.log("updateCharts");
+console.log(updateCCounter);
 }  
 
+function updateGauges(temps) { 
 
+timeStamp 	= temps.map(function(d) {return d.Time});
+DeckTemp 	= temps.map(function(d) {return +d.Deck});
+BaseTemp 	= temps.map(function(d) {return +d.BaseStation});
+G_aTemp 	= temps.map(function(d) {return +d.Ground_air});
+G_30Temp 	= temps.map(function(d) {return +d.Ground_30cm});
+BedCTemp 	= temps.map(function(d) {return +d.Bed_Cady});
+BedITemp 	= temps.map(function(d) {return +d.Bed_Ismay});
+BedMTemp 	= temps.map(function(d) {return +d.Bed_Master});
+CeilingTemp = temps.map(function(d) {return +d.Ceiling});
+LoungeTemp 	= temps.map(function(d) {return +d.Lounge});
+
+lastDeck = DeckTemp[DeckTemp.length - 1].toFixed(1);
+lastBase = BaseTemp[BaseTemp.length - 1].toFixed(1);
+lastAir = G_aTemp[G_aTemp.length - 1].toFixed(1);
+lastSoil = G_30Temp[G_30Temp.length - 1].toFixed(1);
+lastBC = BedCTemp[BedCTemp.length - 1].toFixed(1);
+lastBI = BedITemp[BedITemp.length - 1].toFixed(1);
+lastBM = BedMTemp[BedMTemp.length - 1].toFixed(1);
+lastCeiling = CeilingTemp[CeilingTemp.length - 1].toFixed(1);
+lastLounge = LoungeTemp[LoungeTemp.length - 1].toFixed(1);
+
+gaugeDeck.data.datasets[0].value 	= lastDeck;
+gaugeAir.data.datasets[0].value 	= lastAir;
+gaugeBC.data.datasets[0].value 		= lastBC;
+gaugeBI.data.datasets[0].value 		= lastBI;
+gaugeBM.data.datasets[0].value 		= lastBM;
+gaugeCeiling.data.datasets[0].value = lastCeiling;
+gaugeLounge.data.datasets[0].value 	= lastLounge;
+
+gaugeDeck.update();
+gaugeAir.update();
+gaugeBC.update();
+gaugeBI.update();
+gaugeBM.update();
+gaugeCeiling.update();
+gaugeLounge.update();
+//gaugeBase.update();
+//gaugeSoil.update();
+
+updateGCounter++
+console.log("updateGauges");
+console.log(updateGCounter);
+}  
 
 function makeChart(temps) { 
 
@@ -604,25 +617,27 @@ window.gaugeAir = new Chart('gaugeAir', {
 
 // Request data using D3
 var defaultURL 	= 'https://fryett.net/HomeTemp/temp24.csv';
+var latestURL 	= 'https://fryett.net/HomeTemp/latest.csv';
 var fetchURL	= defaultURL;
-
-function upChart(fetchURL){
-  d3.csv(fetchURL).then(updateChart);
-}
 
 d3.csv(defaultURL).then(makeChart);
 		
 d3.selectAll(("input[name='timerange']")).on("change", function(){
-      console.log(this.value);
-      fetchURL = 'https://fryett.net/HomeTemp/' + this.value;
-      console.log(fetchURL);
-      upChart(fetchURL);
-        });
+        console.log(this.value);
+        fetchURL = 'https://fryett.net/HomeTemp/' + this.value;
+        console.log(fetchURL);
+        
+        d3.csv(fetchURL).then(updateCharts);
+        d3.csv(latestURL).then(updateGauges);
+    });
 		
 var interC = setInterval(function() {
-            d3.csv(fetchURL).then(updateChart);
-        }, 30000);
+        d3.csv(fetchURL).then(updateCharts);
+    }, 120000);
 
+var interG = setInterval(function() {
+        d3.csv(latestURL).then(updateGauges);
+    }, 30000);
 		
 </script>
 </body>

@@ -143,8 +143,8 @@ function updateCharts(temps) {
 	chartHouse.update();
 	chartOutside.update();
 updateCCounter++
-console.log("updateCharts");
-console.log(updateCCounter);
+//console.log("updateCharts");
+//console.log(updateCCounter);
 }  
 
 function updateGauges(temps) { 
@@ -189,8 +189,8 @@ gaugeLounge.update();
 //gaugeSoil.update();
 
 updateGCounter++
-console.log("updateGauges");
-console.log(updateGCounter);
+//console.log("updateGauges");
+//console.log(updateGCounter);
 }  
 
 function makeChart(temps) { 
@@ -535,8 +535,8 @@ window.gaugeAir = new Chart('gaugeAir', {
 				enabled: true,
 				drag: true,
 				mode: 'x',
-				onZoom: function({chart}) { console.log(`Im zooming!!!`); },
-				onZoomComplete: function({chart}) { console.log(`I was zoomed!!!`);               }
+				//onZoom: function({chart}) { console.log(`Im zooming!!!`); },
+				//onZoomComplete: function({chart}) { console.log(`I was zoomed!!!`);               }
 			}
 		}
 	}
@@ -604,8 +604,8 @@ window.gaugeAir = new Chart('gaugeAir', {
 				enabled: true,
 				drag: true,
 				mode: 'x',
-				onZoom: function({chart}) { console.log(`Im zooming!!!`); },
-				onZoomComplete: function({chart}) { console.log(`I was zoomed!!!`);               }
+				//onZoom: function({chart}) { console.log(`Im zooming!!!`); },
+				//onZoomComplete: function({chart}) { console.log(`I was zoomed!!!`);               }
 			}
 		}
 	}
@@ -620,23 +620,49 @@ var defaultURL 	= 'https://fryett.net/HomeTemp/temp24.csv';
 var latestURL 	= 'https://fryett.net/HomeTemp/latest.csv';
 var fetchURL	= defaultURL;
 
+
 d3.csv(defaultURL).then(makeChart);
+
+var upTimer = 120000;
 		
 d3.selectAll(("input[name='timerange']")).on("change", function(){
-        console.log(this.value);
+        //console.log(this.value);
         fetchURL = 'https://fryett.net/HomeTemp/' + this.value;
-        console.log(fetchURL);
+        //console.log(fetchURL);
         
         d3.csv(fetchURL).then(updateCharts);
         d3.csv(latestURL).then(updateGauges);
+        switch (this.value) {
+            case "temp.csv":
+                upTimer = 600000; //10min update on charts for all time points
+                break;
+            case "temp48.csv":
+                upTimer = 300000; //5min update on 48h charts
+                break;
+            case "temp60min.csv":
+                upTimer = 30000; //30sec update on 1h charts
+                break;
+            default:
+                upTimer = 120000; //2min update on all others
+        }
+        //console.log(upTimer);
+        clearInterval(interC);
+        
+        interC = setInterval(function() {
+                d3.csv(fetchURL).then(updateCharts);
+        }, upTimer);
+        
+        //console.log(interC);
+
     });
 		
 var interC = setInterval(function() {
         d3.csv(fetchURL).then(updateCharts);
-    }, 120000);
+    }, upTimer);
 
 var interG = setInterval(function() {
         d3.csv(latestURL).then(updateGauges);
+        //console.log(upTimer);
     }, 30000);
 		
 </script>

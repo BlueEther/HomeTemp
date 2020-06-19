@@ -106,19 +106,33 @@ var aLength =0;
 var updateCCounter = 0;
 var updateGCounter = 0;
 
+function updateMap(temps){
+  window.timeStamp 		= temps.map(function(d) {return d.Time});
+  window.DeckTemp 		= temps.map(function(d) {return +d.Deck});
+  window.BaseTemp 		= temps.map(function(d) {return +d.BaseStation});
+  window.G_aTemp 		= temps.map(function(d) {return +d.Ground_air});
+  window.G_30Temp 		= temps.map(function(d) {return +d.Ground_30cm});
+  window.BedCTemp 		= temps.map(function(d) {return +d.Bed_Cady+2});
+  window.BedITemp 		= temps.map(function(d) {return +d.Bed_Ismay+1.5});
+  window.BedMTemp 		= temps.map(function(d) {return +d.Bed_Master+1.5});
+  window.CeilingTemp 	= temps.map(function(d) {return +d.Ceiling});
+  window.LoungeTemp 	= temps.map(function(d) {return +d.Lounge+1.5});
+};
+
 function updateCharts(temps) { 
 
     var updateCounter;
-	timeStamp 	= temps.map(function(d) {return d.Time});
-	DeckTemp 	= temps.map(function(d) {return +d.Deck});
-	BaseTemp 	= temps.map(function(d) {return +d.BaseStation});
-	G_aTemp 	= temps.map(function(d) {return +d.Ground_air});
-	G_30Temp 	= temps.map(function(d) {return +d.Ground_30cm});
-	BedCTemp 	= temps.map(function(d) {return +d.Bed_Cady});
-	BedITemp 	= temps.map(function(d) {return +d.Bed_Ismay});
-	BedMTemp 	= temps.map(function(d) {return +d.Bed_Master});
-	CeilingTemp = temps.map(function(d) {return +d.Ceiling});
-	LoungeTemp 	= temps.map(function(d) {return +d.Lounge});
+    updateMap(temps);
+	// timeStamp 	= temps.map(function(d) {return d.Time});
+	// DeckTemp 	= temps.map(function(d) {return +d.Deck});
+	// BaseTemp 	= temps.map(function(d) {return +d.BaseStation});
+	// G_aTemp 	= temps.map(function(d) {return +d.Ground_air});
+	// G_30Temp 	= temps.map(function(d) {return +d.Ground_30cm});
+	// BedCTemp 	= temps.map(function(d) {return +d.Bed_Cady});
+	// BedITemp 	= temps.map(function(d) {return +d.Bed_Ismay});
+	// BedMTemp 	= temps.map(function(d) {return +d.Bed_Master});
+	// CeilingTemp = temps.map(function(d) {return +d.Ceiling});
+	// LoungeTemp 	= temps.map(function(d) {return +d.Lounge});
 	
 	chartHouse.data.labels = timeStamp;
 	chartHouse.data.datasets[0].data = CeilingTemp;
@@ -148,17 +162,19 @@ updateCCounter++
 }  
 
 function updateGauges(temps) { 
+  var updateCounter;
 
-timeStamp 	= temps.map(function(d) {return d.Time});
-DeckTemp 	= temps.map(function(d) {return +d.Deck});
-BaseTemp 	= temps.map(function(d) {return +d.BaseStation});
-G_aTemp 	= temps.map(function(d) {return +d.Ground_air});
-G_30Temp 	= temps.map(function(d) {return +d.Ground_30cm});
-BedCTemp 	= temps.map(function(d) {return +d.Bed_Cady});
-BedITemp 	= temps.map(function(d) {return +d.Bed_Ismay});
-BedMTemp 	= temps.map(function(d) {return +d.Bed_Master});
-CeilingTemp = temps.map(function(d) {return +d.Ceiling});
-LoungeTemp 	= temps.map(function(d) {return +d.Lounge});
+  updateMap(temps);
+// timeStamp 	= temps.map(function(d) {return d.Time});
+// DeckTemp 	= temps.map(function(d) {return +d.Deck});
+// BaseTemp 	= temps.map(function(d) {return +d.BaseStation});
+// G_aTemp 	= temps.map(function(d) {return +d.Ground_air});
+// G_30Temp 	= temps.map(function(d) {return +d.Ground_30cm});
+// BedCTemp 	= temps.map(function(d) {return +d.Bed_Cady+1.5});
+// BedITemp 	= temps.map(function(d) {return +d.Bed_Ismay+1.5});
+// BedMTemp 	= temps.map(function(d) {return +d.Bed_Master+1.5});
+// CeilingTemp = temps.map(function(d) {return +d.Ceiling});
+// LoungeTemp 	= temps.map(function(d) {return +d.Lounge+1.5});
 
 lastDeck = DeckTemp[DeckTemp.length - 1].toFixed(1);
 lastBase = BaseTemp[BaseTemp.length - 1].toFixed(1);
@@ -196,16 +212,20 @@ updateGCounter++
 function makeChart(temps) { 
 
 	//console.log(temps);
-  window.timeStamp 		= temps.map(function(d) {return d.Time});
-  window.DeckTemp 		= temps.map(function(d) {return +d.Deck});
-  window.BaseTemp 		= temps.map(function(d) {return +d.BaseStation});
-  window.G_aTemp 		= temps.map(function(d) {return +d.Ground_air});
-  window.G_30Temp 		= temps.map(function(d) {return +d.Ground_30cm});
-  window.BedCTemp 		= temps.map(function(d) {return +d.Bed_Cady});
-  window.BedITemp 		= temps.map(function(d) {return +d.Bed_Ismay});
-  window.BedMTemp 		= temps.map(function(d) {return +d.Bed_Master});
-  window.CeilingTemp 	= temps.map(function(d) {return +d.Ceiling});
-  window.LoungeTemp 	= temps.map(function(d) {return +d.Lounge});
+  var updateCounter;
+  
+  updateMap(temps);
+
+  // window.timeStamp 		= temps.map(function(d) {return d.Time});
+  // window.DeckTemp 		= temps.map(function(d) {return +d.Deck});
+  // window.BaseTemp 		= temps.map(function(d) {return +d.BaseStation});
+  // window.G_aTemp 		= temps.map(function(d) {return +d.Ground_air});
+  // window.G_30Temp 		= temps.map(function(d) {return +d.Ground_30cm});
+  // window.BedCTemp 		= temps.map(function(d) {return +d.Bed_Cady});
+  // window.BedITemp 		= temps.map(function(d) {return +d.Bed_Ismay});
+  // window.BedMTemp 		= temps.map(function(d) {return +d.Bed_Master});
+  // window.CeilingTemp 	= temps.map(function(d) {return +d.Ceiling});
+  // window.LoungeTemp 	= temps.map(function(d) {return +d.Lounge});
     
   window.lastDeck = DeckTemp[DeckTemp.length - 1].toFixed(1);
   window.lastBase = BaseTemp[BaseTemp.length - 1].toFixed(1);
@@ -236,7 +256,7 @@ function makeChart(temps) {
     },
     layout: {
       padding: {
-        bottom: 30
+        bottom: 30,
       }
     },
     needle: {

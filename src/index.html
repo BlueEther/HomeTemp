@@ -86,6 +86,10 @@ H2{
     <label for="48h">Last 48 hours</label>
   </div>
   <div class="column">
+    <input type="radio" id="7d" name="timerange" value="temp7d.csv" >
+    <label for="47d">Last 7 days</label>
+  </div>
+  <div class="column">
     <input type="radio" id="all" name="timerange" value="temp.csv">
     <label for="all">All recorded temperature readings <br>(may take a long time to load)</label>
   </div>
@@ -102,9 +106,6 @@ H2{
   
 var data = [5,10,15,20,25,30,35];//Gauge temp ranges
 var aLength =0;
-
-var updateCCounter = 0;
-var updateGCounter = 0;
 
 function updateMap(temps){
   window.timeStamp 		= temps.map(function(d) {return d.Time});
@@ -132,8 +133,6 @@ function updateLastTemp(){
 };
 
 function updateCharts(temps) { 
-
-  var updateCounter;
   updateMap(temps);
   updateLastTemp();
 	

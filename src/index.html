@@ -100,7 +100,7 @@ H2{
 
  <script>
   
-var data = [5,10,15,20,25,30,35];//randomData();
+var data = [5,10,15,20,25,30,35];//Gauge temp ranges
 var aLength =0;
 
 var updateCCounter = 0;
@@ -110,29 +110,32 @@ function updateMap(temps){
   window.timeStamp 		= temps.map(function(d) {return d.Time});
   window.DeckTemp 		= temps.map(function(d) {return +d.Deck});
   window.BaseTemp 		= temps.map(function(d) {return +d.BaseStation});
-  window.G_aTemp 		= temps.map(function(d) {return +d.Ground_air});
+  window.G_aTemp 		  = temps.map(function(d) {return +d.Ground_air});
   window.G_30Temp 		= temps.map(function(d) {return +d.Ground_30cm});
-  window.BedCTemp 		= temps.map(function(d) {return +d.Bed_Cady+2});
-  window.BedITemp 		= temps.map(function(d) {return +d.Bed_Ismay+1.5});
-  window.BedMTemp 		= temps.map(function(d) {return +d.Bed_Master+1.5});
+  window.BedCTemp 		= temps.map(function(d) {return +d.Bed_Cady});      
+  window.BedITemp 		= temps.map(function(d) {return +d.Bed_Ismay});
+  window.BedMTemp 		= temps.map(function(d) {return +d.Bed_Master});
   window.CeilingTemp 	= temps.map(function(d) {return +d.Ceiling});
-  window.LoungeTemp 	= temps.map(function(d) {return +d.Lounge+1.5});
+  window.LoungeTemp 	= temps.map(function(d) {return +d.Lounge});
+};
+
+function updateLastTemp(){
+  window.lastDeck = DeckTemp[DeckTemp.length - 1].toFixed(1);
+  window.lastBase = BaseTemp[BaseTemp.length - 1].toFixed(1);
+  window.lastAir = G_aTemp[G_aTemp.length - 1].toFixed(1);
+  window.lastSoil = G_30Temp[G_30Temp.length - 1].toFixed(1);
+  window.lastBC = BedCTemp[BedCTemp.length - 1].toFixed(1);
+  window.lastBI = BedITemp[BedITemp.length - 1].toFixed(1);
+  window.lastBM = BedMTemp[BedMTemp.length - 1].toFixed(1);
+  window.lastCeiling = CeilingTemp[CeilingTemp.length - 1].toFixed(1);
+  window.lastLounge = LoungeTemp[LoungeTemp.length - 1].toFixed(1);
 };
 
 function updateCharts(temps) { 
 
-    var updateCounter;
-    updateMap(temps);
-	// timeStamp 	= temps.map(function(d) {return d.Time});
-	// DeckTemp 	= temps.map(function(d) {return +d.Deck});
-	// BaseTemp 	= temps.map(function(d) {return +d.BaseStation});
-	// G_aTemp 	= temps.map(function(d) {return +d.Ground_air});
-	// G_30Temp 	= temps.map(function(d) {return +d.Ground_30cm});
-	// BedCTemp 	= temps.map(function(d) {return +d.Bed_Cady});
-	// BedITemp 	= temps.map(function(d) {return +d.Bed_Ismay});
-	// BedMTemp 	= temps.map(function(d) {return +d.Bed_Master});
-	// CeilingTemp = temps.map(function(d) {return +d.Ceiling});
-	// LoungeTemp 	= temps.map(function(d) {return +d.Lounge});
+  var updateCounter;
+  updateMap(temps);
+  updateLastTemp();
 	
 	chartHouse.data.labels = timeStamp;
 	chartHouse.data.datasets[0].data = CeilingTemp;
@@ -156,87 +159,36 @@ function updateCharts(temps) {
 	
 	chartHouse.update();
 	chartOutside.update();
-updateCCounter++
 //console.log("updateCharts");
-//console.log(updateCCounter);
 }  
 
 function updateGauges(temps) { 
-  var updateCounter;
-
   updateMap(temps);
-// timeStamp 	= temps.map(function(d) {return d.Time});
-// DeckTemp 	= temps.map(function(d) {return +d.Deck});
-// BaseTemp 	= temps.map(function(d) {return +d.BaseStation});
-// G_aTemp 	= temps.map(function(d) {return +d.Ground_air});
-// G_30Temp 	= temps.map(function(d) {return +d.Ground_30cm});
-// BedCTemp 	= temps.map(function(d) {return +d.Bed_Cady+1.5});
-// BedITemp 	= temps.map(function(d) {return +d.Bed_Ismay+1.5});
-// BedMTemp 	= temps.map(function(d) {return +d.Bed_Master+1.5});
-// CeilingTemp = temps.map(function(d) {return +d.Ceiling});
-// LoungeTemp 	= temps.map(function(d) {return +d.Lounge+1.5});
 
-lastDeck = DeckTemp[DeckTemp.length - 1].toFixed(1);
-lastBase = BaseTemp[BaseTemp.length - 1].toFixed(1);
-lastAir = G_aTemp[G_aTemp.length - 1].toFixed(1);
-lastSoil = G_30Temp[G_30Temp.length - 1].toFixed(1);
-lastBC = BedCTemp[BedCTemp.length - 1].toFixed(1);
-lastBI = BedITemp[BedITemp.length - 1].toFixed(1);
-lastBM = BedMTemp[BedMTemp.length - 1].toFixed(1);
-lastCeiling = CeilingTemp[CeilingTemp.length - 1].toFixed(1);
-lastLounge = LoungeTemp[LoungeTemp.length - 1].toFixed(1);
+  gaugeDeck.data.datasets[0].value 	= lastDeck;
+  gaugeAir.data.datasets[0].value 	= lastAir;
+  gaugeBC.data.datasets[0].value 		= lastBC;
+  gaugeBI.data.datasets[0].value 		= lastBI;
+  gaugeBM.data.datasets[0].value 		= lastBM;
+  gaugeCeiling.data.datasets[0].value = lastCeiling;
+  gaugeLounge.data.datasets[0].value 	= lastLounge;
 
-gaugeDeck.data.datasets[0].value 	= lastDeck;
-gaugeAir.data.datasets[0].value 	= lastAir;
-gaugeBC.data.datasets[0].value 		= lastBC;
-gaugeBI.data.datasets[0].value 		= lastBI;
-gaugeBM.data.datasets[0].value 		= lastBM;
-gaugeCeiling.data.datasets[0].value = lastCeiling;
-gaugeLounge.data.datasets[0].value 	= lastLounge;
+  gaugeDeck.update();
+  gaugeAir.update();
+  gaugeBC.update();
+  gaugeBI.update();
+  gaugeBM.update();
+  gaugeCeiling.update();
+  gaugeLounge.update();
+  //gaugeBase.update();
+  //gaugeSoil.update();
 
-gaugeDeck.update();
-gaugeAir.update();
-gaugeBC.update();
-gaugeBI.update();
-gaugeBM.update();
-gaugeCeiling.update();
-gaugeLounge.update();
-//gaugeBase.update();
-//gaugeSoil.update();
-
-updateGCounter++
 //console.log("updateGauges");
-//console.log(updateGCounter);
 }  
 
 function makeChart(temps) { 
-
-	//console.log(temps);
-  var updateCounter;
-  
   updateMap(temps);
-
-  // window.timeStamp 		= temps.map(function(d) {return d.Time});
-  // window.DeckTemp 		= temps.map(function(d) {return +d.Deck});
-  // window.BaseTemp 		= temps.map(function(d) {return +d.BaseStation});
-  // window.G_aTemp 		= temps.map(function(d) {return +d.Ground_air});
-  // window.G_30Temp 		= temps.map(function(d) {return +d.Ground_30cm});
-  // window.BedCTemp 		= temps.map(function(d) {return +d.Bed_Cady});
-  // window.BedITemp 		= temps.map(function(d) {return +d.Bed_Ismay});
-  // window.BedMTemp 		= temps.map(function(d) {return +d.Bed_Master});
-  // window.CeilingTemp 	= temps.map(function(d) {return +d.Ceiling});
-  // window.LoungeTemp 	= temps.map(function(d) {return +d.Lounge});
-    
-  window.lastDeck = DeckTemp[DeckTemp.length - 1].toFixed(1);
-  window.lastBase = BaseTemp[BaseTemp.length - 1].toFixed(1);
-  window.lastAir = G_aTemp[G_aTemp.length - 1].toFixed(1);
-  window.lastSoil = G_30Temp[G_30Temp.length - 1].toFixed(1);
-  window.lastBC = BedCTemp[BedCTemp.length - 1].toFixed(1);
-  window.lastBI = BedITemp[BedITemp.length - 1].toFixed(1);
-  window.lastBM = BedMTemp[BedMTemp.length - 1].toFixed(1);
-  window.lastCeiling = CeilingTemp[CeilingTemp.length - 1].toFixed(1);
-  window.lastLounge = LoungeTemp[LoungeTemp.length - 1].toFixed(1);
-  
+  updateLastTemp();
   window.gaugeDeck = new Chart('gaugeDeck', {
   type: 'gauge',
   data: {

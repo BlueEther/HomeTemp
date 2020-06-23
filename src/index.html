@@ -30,7 +30,7 @@ H2{
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.7.0/d3.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@0.7.6"></script>
   <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
- 
+  <script src="https://rawgit.com/sfrauenfelder/chartjs-plugin-gridline-background/master/chartjs-plugin-gridline-background.js"></script>
 </head>
 
 <body><h2 > Home Temps</h2>
@@ -476,41 +476,38 @@ window.gaugeAir = new Chart('gaugeAir', {
       ]
     },
     options: {
-	title: {
-      display: true,
-      text: 'Inside',
-	  fontSize: 18
-    },
+	    title: {
+        display: true,
+        text: 'Inside',
+	      fontSize: 18
+      },
       maintainAspectRatio: false,
       legend: {
         display: true,
       },
       scales: {
         xAxes: [{
-            type: 'time',
-
+          type: 'time',
           distribution: 'linear',
-            ticks: {
-                source: 'date'},
+          ticks: {
+            source: 'date'
+          },
             
-          }
-        ]
+        }]
       },
       plugins: {
-		zoom: {
-			pan: {
-				enabled: true,
-				mode: 'x'
-			},
-			zoom: {
-				enabled: true,
-				drag: true,
-				mode: 'x',
-				//onZoom: function({chart}) { console.log(`Im zooming!!!`); },
-				//onZoomComplete: function({chart}) { console.log(`I was zoomed!!!`);               }
-			}
-		}
-	}
+        zoom: {
+          pan: {
+            enabled: true,
+            mode: 'x'
+          },
+          zoom: {
+            enabled: true,
+            drag: true,
+            mode: 'x',
+          }
+        }
+      }
     },
    })   
    window.chartOutside = new Chart('chartOutside', {
@@ -548,7 +545,7 @@ window.gaugeAir = new Chart('gaugeAir', {
 		title: {
       display: true,
       text: 'Outside',
-	  fontSize: 18
+	    fontSize: 18
     },
       maintainAspectRatio: false,
       legend: {
@@ -557,29 +554,25 @@ window.gaugeAir = new Chart('gaugeAir', {
       scales: {
         xAxes: [{
             type: 'time',
-
-          distribution: 'linear',
+            distribution: 'linear',
             ticks: {
-                source: 'date'},
-            
-          }
-        ]
+              source: 'date'
+            },
+          }]
       },
       plugins: {
-		zoom: {
-			pan: {
-				enabled: true,
-				mode: 'x'
-			},
-			zoom: {
-				enabled: true,
-				drag: true,
-				mode: 'x',
-				//onZoom: function({chart}) { console.log(`Im zooming!!!`); },
-				//onZoomComplete: function({chart}) { console.log(`I was zoomed!!!`);               }
-			}
-		}
-	}
+        zoom: {
+          pan: {
+            enabled: true,
+            mode: 'x'
+          },
+          zoom: {
+            enabled: true,
+            drag: true,
+            mode: 'x',
+          }
+        }
+      }
     },
    })
    

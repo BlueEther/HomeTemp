@@ -30,6 +30,7 @@ H2{
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.7.0/d3.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@0.7.6"></script>
   <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
+  <script src="https://rawgit.com/chartjs/chartjs-plugin-annotation/master/chartjs-plugin-annotation.js"></script>
   <script src="https://rawgit.com/sfrauenfelder/chartjs-plugin-gridline-background/master/chartjs-plugin-gridline-background.js"></script>
 </head>
 
@@ -106,6 +107,21 @@ H2{
   
 var data = [5,10,15,20,25,30,35];//Gauge temp ranges
 var aLength =0;
+var temp0_5g = 'rgba(26, 35, 126, .25)';
+var temp5_10g = 'rgba(33, 150, 243, .25)';
+var temp10_15g = 'rgba(0, 188, 212, .25)';
+var temp15_20g = 'rgba(76, 175, 80, .25)';
+var temp20_25g = 'rgba(205, 220, 57, .25)';
+var temp25_30g = 'rgba(255, 193, 7, .25)';
+var temp30_35g = 'rgba(255, 87, 34, .25)';
+
+var temp0_5c = 'rgba(26, 35, 226, .1)';
+var temp5_10c = 'rgba(33, 150, 243, .1)';
+var temp10_15c = 'rgba(0, 188, 212, .1)';
+var temp15_20c = 'rgba(76, 175, 80, .1)';
+var temp20_25c = 'rgba(205, 220, 57, .1)';
+var temp25_30c = 'rgba(255, 193, 7, .1)';
+var temp30_35c = 'rgba(255, 87, 34, .1)';
 
 function updateMap(temps){
   window.timeStamp 		= temps.map(function(d) {return d.Time});
@@ -195,7 +211,7 @@ function makeChart(temps) {
     datasets: [{
       data: data,
       value: lastDeck,
-      backgroundColor: ['rgb(26, 35, 126)','rgb(33, 150, 243)','rgb(0, 188, 212 )', 'rgb(76, 175, 80)', 'rgb(205, 220, 57)', 'rgb(255, 193, 7)', 'rgb(255, 87, 34)'],
+      backgroundColor: [temp0_5g, temp5_10g, temp10_15g, temp15_20g, temp20_25g, temp25_30g, temp30_35g],
       borderWidth: 2
     }]
   },
@@ -229,7 +245,7 @@ function makeChart(temps) {
     datasets: [{
       data: data,
       value: lastBC,
-      backgroundColor: ['rgb(26, 35, 126)','rgb(33, 150, 243)','rgb(0, 188, 212 )', 'rgb(76, 175, 80)', 'rgb(205, 220, 57)', 'rgb(255, 193, 7)', 'rgb(255, 87, 34)'],
+      backgroundColor: [temp0_5g, temp5_10g, temp10_15g, temp15_20g, temp20_25g, temp25_30g, temp30_35g],
       borderWidth: 2
     }]
   },
@@ -263,7 +279,7 @@ window.gaugeBI = new Chart('gaugeBI', {
     datasets: [{
       data: data,
       value: lastBI,
-      backgroundColor: ['rgb(26, 35, 126)','rgb(33, 150, 243)','rgb(0, 188, 212 )', 'rgb(76, 175, 80)', 'rgb(205, 220, 57)', 'rgb(255, 193, 7)', 'rgb(255, 87, 34)'],
+      backgroundColor:  [temp0_5g, temp5_10g, temp10_15g, temp15_20g, temp20_25g, temp25_30g, temp30_35g],
       borderWidth: 2
     }]
   },
@@ -296,7 +312,7 @@ window.gaugeBM = new Chart('gaugeBM', {
     datasets: [{
       data: data,
       value: lastBM,
-      backgroundColor: ['rgb(26, 35, 126)','rgb(33, 150, 243)','rgb(0, 188, 212 )', 'rgb(76, 175, 80)', 'rgb(205, 220, 57)', 'rgb(255, 193, 7)', 'rgb(255, 87, 34)'],
+      backgroundColor:  [temp0_5g, temp5_10g, temp10_15g, temp15_20g, temp20_25g, temp25_30g, temp30_35g],
       borderWidth: 2
     }]
   },
@@ -330,7 +346,7 @@ window.gaugeCeiling = new Chart('gaugeCeiling', {
     datasets: [{
       data: data,
       value: lastCeiling,
-      backgroundColor: ['rgb(26, 35, 126)','rgb(33, 150, 243)','rgb(0, 188, 212 )', 'rgb(76, 175, 80)', 'rgb(205, 220, 57)', 'rgb(255, 193, 7)', 'rgb(255, 87, 34)'],
+      backgroundColor:  [temp0_5g, temp5_10g, temp10_15g, temp15_20g, temp20_25g, temp25_30g, temp30_35g],
       borderWidth: 2
     }]
   },
@@ -366,7 +382,7 @@ window.gaugeAir = new Chart('gaugeAir', {
     datasets: [{
       data: data,
       value: lastAir,
-      backgroundColor: ['rgb(26, 35, 126)','rgb(33, 150, 243)','rgb(0, 188, 212 )', 'rgb(76, 175, 80)', 'rgb(205, 220, 57)', 'rgb(255, 193, 7)', 'rgb(255, 87, 34)'],
+      backgroundColor:  [temp0_5g, temp5_10g, temp10_15g, temp15_20g, temp20_25g, temp25_30g, temp30_35g],
       borderWidth: 2
     }]
   },
@@ -400,7 +416,7 @@ window.gaugeAir = new Chart('gaugeAir', {
     datasets: [{
       data: data,
       value: lastLounge,
-      backgroundColor: ['rgb(26, 35, 126)','rgb(33, 150, 243)','rgb(0, 188, 212 )', 'rgb(76, 175, 80)', 'rgb(205, 220, 57)', 'rgb(255, 193, 7)', 'rgb(255, 87, 34)'],
+      backgroundColor:  [temp0_5g, temp5_10g, temp10_15g, temp15_20g, temp20_25g, temp25_30g, temp30_35g],
       borderWidth: 2
     }]
   },
@@ -493,7 +509,30 @@ window.gaugeAir = new Chart('gaugeAir', {
             source: 'date'
           },
             
-        }]
+        }],
+//////////////////////////////////////////////
+        yAxes: [{
+						type: 'linear',
+						id: 'right-y-axis',
+						ticks: {
+							min: 0,
+							max: 35,
+              stepSize: 5,
+						},
+            position: 'right',
+            gridLines: {
+              backgroundColor: [
+                temp30_35c,
+                temp25_30c, 
+                temp20_25c, 
+                temp15_20c, 
+                temp10_15c, 
+                temp5_10c, 
+                temp0_5c, 
+              ]
+            }
+        }],
+//////////////////////////////////////////////
       },
       plugins: {
         zoom: {
@@ -558,7 +597,26 @@ window.gaugeAir = new Chart('gaugeAir', {
             ticks: {
               source: 'date'
             },
-          }]
+          }],
+          yAxes: [{
+						type: 'linear',
+						ticks: {
+							min: 0,
+							max: 35,
+              stepSize: 5,
+						},
+            gridLines: {
+              backgroundColor: [
+                temp30_35c,
+                temp25_30c, 
+                temp20_25c, 
+                temp15_20c, 
+                temp10_15c, 
+                temp5_10c, 
+                temp0_5c 
+              ]
+            }
+        }],
       },
       plugins: {
         zoom: {

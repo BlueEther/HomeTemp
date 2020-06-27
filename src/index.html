@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en-US">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
  canvas {
   -moz-user-select: none;
   -webkit-user-select: none;
@@ -14,96 +14,89 @@
 	display: flex;
   justify-content: flex-start
 }
-
   .column {
     width: 75%;
 	padding:10px;
-
 }
 H2{
 	text-align: center
 }
-</style>
-  <title>Gauge Chart</title>
-  <script src="https://unpkg.com/chart.js@2.8.0/dist/Chart.bundle.js"></script>
-  <script src="https://unpkg.com/chartjs-gauge@0.2.0/dist/chartjs-gauge.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.7.0/d3.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@0.7.6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
-  <script src="https://rawgit.com/chartjs/chartjs-plugin-annotation/master/chartjs-plugin-annotation.js"></script>
-  <script src="https://rawgit.com/sfrauenfelder/chartjs-plugin-gridline-background/master/chartjs-plugin-gridline-background.js"></script>
-</head>
-
-<body><h2 > Home Temps</h2>
-
-
-  <div id="canvas-holder" class="row">
-    <div class="column" >
-	<canvas id="gaugeCeiling" width="200" height="200"></canvas>
+    </style>
+    <title>Gauge Chart</title>
+    <script src="https://unpkg.com/chart.js@2.8.0/dist/Chart.bundle.js"></script>
+    <script src="https://unpkg.com/chartjs-gauge@0.2.0/dist/chartjs-gauge.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.7.0/d3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@0.7.6"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
+    <script src="https://rawgit.com/chartjs/chartjs-plugin-annotation/master/chartjs-plugin-annotation.js"></script>
+    <script src="https://rawgit.com/sfrauenfelder/chartjs-plugin-gridline-background/master/chartjs-plugin-gridline-background.js"></script>
+  </head>
+  <body>
+    <h2 > Home Temps</h2>
+    <div id="canvas-holder" class="row">
+      <div class="column" >
+	      <canvas id="gaugeCeiling" width="200" height="200"></canvas>
+      </div>
+      <div class="column" >
+        <canvas id="gaugeLounge"  width="200" height="200"></canvas>
+      </div>
+      <div class="column" >
+        <canvas id="gaugeBC"  width="200" height="200"></canvas>
+      </div>
+      <div class="column" >
+        <canvas id="gaugeBI"  width="200" height="200"></canvas>
+      </div>
+      <div class="column" >
+        <canvas id="gaugeBM"  width="200" height="200"></canvas>
+      </div>
+      <div class="column" >
+        <canvas id="gaugeDeck"  width="200" height="200"></canvas>
+      </div>
+      <div class="column" >
+        <canvas id="gaugeAir"  width="200" height="200"></canvas>
+      </div>
     </div>
-  <div class="column" >
-  <canvas id="gaugeLounge"  width="200" height="200"></canvas>
-  </div>
-  <div class="column" >
-  <canvas id="gaugeBC"  width="200" height="200"></canvas>
-  </div>
-  <div class="column" >
-  <canvas id="gaugeBI"  width="200" height="200"></canvas>
-  </div>
-  <div class="column" >
-  <canvas id="gaugeBM"  width="200" height="200"></canvas>
-  </div>
-  <div class="column" >
-  <canvas id="gaugeDeck"  width="200" height="200"></canvas>
-  </div>
-  <div class="column" >
-  <canvas id="gaugeAir"  width="200" height="200"></canvas>
-  </div>
-  </div>
-
-  <div  class="row">
-    <div class="column" >
-      <input type="radio" id="1h" name="timerange" value="temp60min.csv">
-      <label for="1h">Last 1 hour</label>
-    </div>    
-    <div class="column" >
-      <input type="radio" id="2h" name="timerange" value="temp2.csv">
-      <label for="2h">Last 2 hours</label>
+    <div  class="row">
+      <div class="column" >
+        <input type="radio" id="1h" name="timerange" value="temp60min.csv">
+        <label for="1h">Last 1 hour</label>
+      </div>    
+      <div class="column" >
+        <input type="radio" id="2h" name="timerange" value="temp2.csv">
+        <label for="2h">Last 2 hours</label>
+      </div>
+      <div  class="column">
+        <input type="radio" id="6h" name="timerange" value="temp6.csv">
+        <label for="6h">Last 6 hours</label>
+      </div>
+      <div  class="column">
+        <input type="radio" id="12h" name="timerange" value="temp12.csv">
+        <label for="12h">Last 12 hours</label>
+      </div>
+      <div class="column">
+        <input type="radio" id="24h" name="timerange" value="temp24.csv" checked>
+        <label for="24h">Last 24 hours</label>
+      </div>
+      <div class="column">
+        <input type="radio" id="48h" name="timerange" value="temp48.csv" >
+        <label for="48h">Last 48 hours</label>
+      </div>
+      <div class="column">
+        <input type="radio" id="7d" name="timerange" value="temp7d.csv" >
+        <label for="47d">Last 7 days</label>
+      </div>
+      <div class="column">
+        <input type="radio" id="all" name="timerange" value="temp.csv">
+        <label for="all">All recorded temperature readings <br>(may take a long time to load)</label>
+      </div>
     </div>
-    <div  class="column">
-      <input type="radio" id="6h" name="timerange" value="temp6.csv">
-      <label for="6h">Last 6 hours</label>
-    </div>
-    <div  class="column">
-      <input type="radio" id="12h" name="timerange" value="temp12.csv">
-      <label for="12h">Last 12 hours</label>
-    </div>
-  <div class="column">
-    <input type="radio" id="24h" name="timerange" value="temp24.csv" checked>
-    <label for="24h">Last 24 hours</label>
-  </div>
-  <div class="column">
-    <input type="radio" id="48h" name="timerange" value="temp48.csv" >
-    <label for="48h">Last 48 hours</label>
-  </div>
-  <div class="column">
-    <input type="radio" id="7d" name="timerange" value="temp7d.csv" >
-    <label for="47d">Last 7 days</label>
-  </div>
-  <div class="column">
-    <input type="radio" id="all" name="timerange" value="temp.csv">
-    <label for="all">All recorded temperature readings <br>(may take a long time to load)</label>
-  </div>
-  </div>
-
-  <div id="chart-wrapperHouse" >
+    <div id="chart-wrapperHouse" >
         <canvas id="chartHouse" height="450"></canvas>
     </div>
-<div id="chart-wrapperOutside" >
-  <canvas id="chartOutside" height="450"></canvas>
-</div>
-
- <script>
+    <div id="chart-wrapperOutside" >
+      <canvas id="chartOutside" height="450"></canvas>
+    </div>
+    <script>
   
 var data = [5,10,15,20,25,30,35];//Gauge temp ranges
 var aLength =0;
@@ -174,7 +167,6 @@ function updateCharts(temps) {
 	
 	chartHouse.update();
 	chartOutside.update();
-//console.log("updateCharts");
 }  
 
 function updateGauges(temps) { 
@@ -197,8 +189,6 @@ function updateGauges(temps) {
   gaugeLounge.update();
   //gaugeBase.update();
   //gaugeSoil.update();
-
-//console.log("updateGauges");
 }  
 
 function makeChart(temps) { 
@@ -207,7 +197,6 @@ function makeChart(temps) {
   window.gaugeDeck = new Chart('gaugeDeck', {
   type: 'gauge',
   data: {
-    //labels: ['Success', 'Warning', 'Warning', 'Error'],
     datasets: [{
       data: data,
       value: lastDeck,
@@ -233,7 +222,6 @@ function makeChart(temps) {
       color: 'rgba(0, 0, 0, 1)'
     },
     valueLabel: {
-      //formatter: Math.round,//Math.round,
       fontSize: 18
     }
   }
@@ -267,7 +255,6 @@ function makeChart(temps) {
       color: 'rgba(0, 0, 0, 1)'
     },
     valueLabel: {
-      //formatter: Math.round,//Math.round,
       fontSize: 18
     }
   }
@@ -301,7 +288,6 @@ window.gaugeBI = new Chart('gaugeBI', {
       color: 'rgba(0, 0, 0, 1)'
     },
     valueLabel: {
-      //formatter: Math.round,//Math.round,
       fontSize: 18
     }
   }
@@ -334,7 +320,6 @@ window.gaugeBM = new Chart('gaugeBM', {
       color: 'rgba(0, 0, 0, 1)'
     },
     valueLabel: {
-      //formatter: Math.round,//Math.round,
       fontSize: 18
     }
   }
@@ -368,7 +353,6 @@ window.gaugeCeiling = new Chart('gaugeCeiling', {
       color: 'rgba(0, 0, 0, 1)'
     },
     valueLabel: {
-      //formatter: Math.round,//Math.round,
       fontSize: 18
     }
   }
@@ -404,7 +388,6 @@ window.gaugeAir = new Chart('gaugeAir', {
       color: 'rgba(0, 0, 0, 1)'
     },
     valueLabel: {
-      //formatter: Math.round,//Math.round,
       fontSize: 18
     }
   }
@@ -438,7 +421,6 @@ window.gaugeAir = new Chart('gaugeAir', {
       color: 'rgba(0, 0, 0, 1)'
     },
     valueLabel: {
-      //formatter: Math.round,//Math.round,
       fontSize: 18
     }
   }
@@ -510,7 +492,6 @@ window.gaugeAir = new Chart('gaugeAir', {
           },
             
         }],
-//////////////////////////////////////////////
         yAxes: [{
 						type: 'linear',
 						id: 'right-y-axis',
@@ -532,7 +513,6 @@ window.gaugeAir = new Chart('gaugeAir', {
               ]
             }
         }],
-//////////////////////////////////////////////
       },
       plugins: {
         zoom: {
@@ -648,7 +628,6 @@ d3.csv(defaultURL).then(makeChart);
 var upTimer = 120000;
 		
 d3.selectAll(("input[name='timerange']")).on("change", function(){
-        //console.log(this.value);
         fetchURL = 'https://fryett.net/HomeTemp/' + this.value;
         //console.log(fetchURL);
         
@@ -667,15 +646,11 @@ d3.selectAll(("input[name='timerange']")).on("change", function(){
             default:
                 upTimer = 120000; //2min update on all others
         }
-        //console.log(upTimer);
         clearInterval(interC);
         
         interC = setInterval(function() {
                 d3.csv(fetchURL).then(updateCharts);
         }, upTimer);
-        
-        //console.log(interC);
-
     });
 		
 var interC = setInterval(function() {
@@ -684,9 +659,8 @@ var interC = setInterval(function() {
 
 var interG = setInterval(function() {
         d3.csv(latestURL).then(updateGauges);
-        //console.log(upTimer);
     }, 30000);
 		
-</script>
-</body>
+    </script>
+  </body>
 </html>

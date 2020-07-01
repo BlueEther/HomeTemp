@@ -100,6 +100,7 @@ H2{
   
 var data = [5,10,15,20,25,30,35];//Gauge temp ranges
 var aLength =0;
+var temp_0g = 'rgba(16, 15, 215, .25)';
 var temp0_5g = 'rgba(26, 35, 126, .25)';
 var temp5_10g = 'rgba(33, 150, 243, .25)';
 var temp10_15g = 'rgba(0, 188, 212, .25)';
@@ -108,6 +109,7 @@ var temp20_25g = 'rgba(205, 220, 57, .25)';
 var temp25_30g = 'rgba(255, 193, 7, .25)';
 var temp30_35g = 'rgba(255, 87, 34, .25)';
 
+var temp_0c = 'rgba(16, 15, 115, .1)';
 var temp0_5c = 'rgba(26, 35, 226, .1)';
 var temp5_10c = 'rgba(33, 150, 243, .1)';
 var temp10_15c = 'rgba(0, 188, 212, .1)';
@@ -432,7 +434,7 @@ window.gaugeAir = new Chart('gaugeAir', {
       labels: timeStamp,
       datasets: [
         {data: CeilingTemp,
-        label: 'Ceiling '+lastCeiling,
+        label: 'Ceiling ('+lastCeiling+')',
         fill: true,
         backgroundColor:  ['rgba(74, 35, 90, 0.05)'],
         borderColor:      ['rgba(74, 35, 90, 1)'],
@@ -440,7 +442,7 @@ window.gaugeAir = new Chart('gaugeAir', {
         pointRadius:0,
         },
         {data: LoungeTemp,
-        label: 'Lounge '+lastLounge,
+        label: 'Lounge ('+lastLounge+')',
         fill: true,
         backgroundColor:  ['rgba(99, 57, 116, 0.05)'],
         borderColor:      ['rgba(99, 57, 116, 1)'],
@@ -448,7 +450,7 @@ window.gaugeAir = new Chart('gaugeAir', {
         pointRadius:0,
         },
         {data: BedCTemp,
-        label: 'Cady\'s Bed '+lastBC,
+        label: 'Cady\'s Bed ('+lastBC+')',
         fill: true,
         backgroundColor:  ['rgba(125, 60, 152, 0.05)'],
         borderColor:      ['rgba(125, 60, 152, 1)'],
@@ -456,7 +458,7 @@ window.gaugeAir = new Chart('gaugeAir', {
         pointRadius:0,
         },
         {data: BedITemp,
-        label: 'Ismay\'s Bed '+lastBI,
+        label: 'Ismay\'s Bed ('+lastBI+')',
         fill: true,
         backgroundColor:  ['rgba(155, 89, 182, 0.05)'],
         borderColor:      ['rgba(155, 89, 182, 1)'],
@@ -464,7 +466,7 @@ window.gaugeAir = new Chart('gaugeAir', {
         pointRadius:0,
         },
         {data: BedMTemp,
-        label: 'Master Bed '+lastBM,
+        label: 'Master Bed ('+lastBM+')',
         fill: true,
         backgroundColor:  ['rgba(210, 180, 222, 0.05)'],
         borderColor:      ['rgba(210, 180, 222, 1)'],
@@ -496,7 +498,7 @@ window.gaugeAir = new Chart('gaugeAir', {
 						type: 'linear',
 						id: 'right-y-axis',
 						ticks: {
-							min: 0,
+							//min: 0,
 							max: 35,
               stepSize: 5,
 						},
@@ -510,6 +512,7 @@ window.gaugeAir = new Chart('gaugeAir', {
                 temp10_15c, 
                 temp5_10c, 
                 temp0_5c, 
+                temp_0c,
               ]
             }
         }],
@@ -529,13 +532,13 @@ window.gaugeAir = new Chart('gaugeAir', {
       }
     },
    })   
-   window.chartOutside = new Chart('chartOutside', {
+  window.chartOutside = new Chart('chartOutside', {
     type: 'line',
     data: {
       labels: timeStamp,
       datasets: [
         {data: DeckTemp,
-        label: 'Deck '+lastDeck,
+        label: 'Deck ('+lastDeck+')',
         fill: true,
         backgroundColor:  ['rgba(133, 193, 233, 0.05)'],
         borderColor:      ['rgba(133, 193, 233, 1)'],
@@ -543,7 +546,7 @@ window.gaugeAir = new Chart('gaugeAir', {
         pointRadius:0,
         },
         {data: G_aTemp,
-        label: 'Air '+lastAir,
+        label: 'Air ('+lastAir+')',
         fill: true,
         backgroundColor:  ['rgba(93, 173, 226, 0.05)'],
         borderColor:      ['rgba(93, 173, 226, 1)'],
@@ -551,7 +554,7 @@ window.gaugeAir = new Chart('gaugeAir', {
         pointRadius:0,
         },
         {data: G_30Temp,
-        label: 'Soil '+lastSoil,
+        label: 'Soil ('+lastSoil+')',
         fill: true,
         backgroundColor:  ['rgba(248, 196, 113, 0.05)'],
         borderColor:      ['rgba(248, 196, 113, 1)'],
@@ -581,7 +584,7 @@ window.gaugeAir = new Chart('gaugeAir', {
           yAxes: [{
 						type: 'linear',
 						ticks: {
-							min: 0,
+							//min: 0,
 							max: 35,
               stepSize: 5,
 						},
@@ -593,7 +596,8 @@ window.gaugeAir = new Chart('gaugeAir', {
                 temp15_20c, 
                 temp10_15c, 
                 temp5_10c, 
-                temp0_5c 
+                temp0_5c,
+                temp_0c,
               ]
             }
         }],
@@ -612,16 +616,13 @@ window.gaugeAir = new Chart('gaugeAir', {
         }
       }
     },
-   })
-   
-  
-   };
+  })
+};
 
 // Request data using D3
 var defaultURL 	= 'https://fryett.net/HomeTemp/temp24.csv';
 var latestURL 	= 'https://fryett.net/HomeTemp/latest.csv';
 var fetchURL	= defaultURL;
-
 
 d3.csv(defaultURL).then(makeChart);
 

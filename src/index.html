@@ -149,23 +149,23 @@ function updateCharts(temps) {
 	
 	chartHouse.data.labels = timeStamp;
 	chartHouse.data.datasets[0].data = CeilingTemp;
-	chartHouse.data.datasets[0].label = 'Ceiling '+lastCeiling;
+	chartHouse.data.datasets[0].label = 'Ceiling ('+lastCeiling+')';
 	chartHouse.data.datasets[1].data = LoungeTemp;
-	chartHouse.data.datasets[1].label = 'Lounge '+lastLounge;
+	chartHouse.data.datasets[1].label = 'Lounge ('+lastLounge+')';
 	chartHouse.data.datasets[2].data = BedCTemp;
-	chartHouse.data.datasets[2].label = 'Cady\s Bed '+lastBC;
+	chartHouse.data.datasets[2].label = 'Cady\s Bed ('+lastBC+')';
 	chartHouse.data.datasets[3].data = BedITemp;
-	chartHouse.data.datasets[3].label = 'Ismay\s Bed '+lastBI;
+	chartHouse.data.datasets[3].label = 'Ismay\s Bed ('+lastBI+')';
 	chartHouse.data.datasets[4].data = BedMTemp;
-	chartHouse.data.datasets[4].label = 'Master Bed '+lastBM;
+	chartHouse.data.datasets[4].label = 'Master Bed ('+lastBM+')';
 	
 	chartOutside.data.labels = timeStamp;
 	chartOutside.data.datasets[0].data = DeckTemp;
-	chartOutside.data.datasets[2].label = 'Deck '+lastDeck
+	chartOutside.data.datasets[2].label = 'Deck ('+lastDeck+')';
 	chartOutside.data.datasets[1].data = G_aTemp;
-	chartOutside.data.datasets[2].label = 'Air '+lastAir
+	chartOutside.data.datasets[2].label = 'Air ('+lastAir+')';
 	chartOutside.data.datasets[2].data = G_30Temp;
-	chartOutside.data.datasets[2].label = 'Soil '+lastSoil
+	chartOutside.data.datasets[2].label = 'Soil ('+lastSoil+')';
 	
 	chartHouse.update();
 	chartOutside.update();

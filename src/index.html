@@ -141,6 +141,9 @@ function updateLastTemp(){
   window.lastBM = BedMTemp[BedMTemp.length - 1].toFixed(1);
   window.lastCeiling = CeilingTemp[CeilingTemp.length - 1].toFixed(1);
   window.lastLounge = LoungeTemp[LoungeTemp.length - 1].toFixed(1);
+  
+  
+  window.lastTime = new Date(timeStamp[timeStamp.length - 1]).toLocaleTimeString();
 };
 
 function updateCharts(temps) { 
@@ -166,6 +169,9 @@ function updateCharts(temps) {
 	chartOutside.data.datasets[2].label = 'Air ('+lastAir+')';
 	chartOutside.data.datasets[2].data = G_30Temp;
 	chartOutside.data.datasets[2].label = 'Soil ('+lastSoil+')';
+
+  chartHouse.options.title.text = 'Inside ('+window.lastTime+')',
+  chartOutside.options.title.text = 'Outside ('+window.lastTime+')',
 	
 	chartHouse.update();
 	chartOutside.update();
@@ -478,7 +484,7 @@ window.gaugeAir = new Chart('gaugeAir', {
     options: {
 	    title: {
         display: true,
-        text: 'Inside',
+        text: 'Inside ('+window.lastTime+')',
 	      fontSize: 18
       },
       maintainAspectRatio: false,
@@ -566,7 +572,7 @@ window.gaugeAir = new Chart('gaugeAir', {
     options: {
 		title: {
       display: true,
-      text: 'Outside',
+      text: 'Outside ('+window.lastTime+')',
 	    fontSize: 18
     },
       maintainAspectRatio: false,
@@ -643,7 +649,10 @@ d3.selectAll(("input[name='timerange']")).on("change", function(){
                 upTimer = 300000; //5min update on 7d charts
                 break;
             case "temp60min.csv":
-                upTimer = 30000; //30sec update on 1h charts
+                upTimer = 60000; //60sec update on 1h charts
+                break;
+            case "temp2.csv":
+                upTimer = 60000; //60sec update on 2h charts
                 break;
             default:
                 upTimer = 120000; //2min update on all others

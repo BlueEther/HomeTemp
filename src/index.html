@@ -129,6 +129,7 @@ function updateMap(temps){
   window.BedMTemp 		= temps.map(function(d) {return +d.Bed_Master});
   window.CeilingTemp 	= temps.map(function(d) {return +d.Ceiling});
   window.LoungeTemp 	= temps.map(function(d) {return +d.Lounge});
+  updateLastTemp(); //move from update and make charts to here
 };
 
 function updateLastTemp(){
@@ -148,7 +149,6 @@ function updateLastTemp(){
 
 function updateCharts(temps) { 
   updateMap(temps);
-  updateLastTemp();
 	
 	chartHouse.data.labels = timeStamp;
 	chartHouse.data.datasets[0].data = CeilingTemp;
@@ -178,7 +178,7 @@ function updateCharts(temps) {
 }  
 
 function updateGauges(temps) { 
-  updateMap(temps);
+  //updateMap(temps); //I dont think I need to call this
 
   gaugeDeck.data.datasets[0].value 	= lastDeck;
   gaugeAir.data.datasets[0].value 	= lastAir;
@@ -201,7 +201,6 @@ function updateGauges(temps) {
 
 function makeChart(temps) { 
   updateMap(temps);
-  updateLastTemp();
   window.gaugeDeck = new Chart('gaugeDeck', {
   type: 'gauge',
   data: {

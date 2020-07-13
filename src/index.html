@@ -635,7 +635,7 @@ d3.csv(defaultURL).then(makeChart);
 
 var upTimer = 120000;
 		
-d3.selectAll(("input[name='timerange']")).on("change", function(){
+d3.selectAll(("input[name='timerange']")).on("change", function(){ //set timer on plot range change
         fetchURL = 'https://fryett.net/HomeTemp/' + this.value;
         //console.log(fetchURL);
         
@@ -657,7 +657,8 @@ d3.selectAll(("input[name='timerange']")).on("change", function(){
             default:
                 upTimer = 120000; //2min update on all others
         }
-        clearInterval(interC);
+        clearInterval(interC); //clear timer for Charts
+        clearInterval(interG); //clear timer for Gauges
         
         interC = setInterval(function() {
                 d3.csv(fetchURL).then(updateCharts);

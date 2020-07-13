@@ -14,7 +14,7 @@ DallasTemperature temperatureSensors(&oneWire);
 int numberOfDevices;
 DeviceAddress tempDeviceAddress; 
 
-const char* Hssid     = "BlueEther Tech";       // ERASE prior to publishing
+const char* Hssid     = "BlueEther_Tech_2G";       // ERASE prior to publishing
 const char* Hpassword = "iwillnotgiveyoumykey";    //   "" ditto
 
 
@@ -88,10 +88,10 @@ void printHeaders(void);
 
 void setup(){
   Serial.begin(115200);
+   delay (5000);
   Serial.println(F("Home Temp Monitor."));
   //CSV Format:
   //Time	 Deck	 Lounge	 BaseStation	 Ground_air	 Ground_30cm	Bed_Cady	Bed_Ismay	Bed_Master	Ceiling Basement
-  delay (1000);
   TemperatureObj[0] = (SensorSet){"Deck",   0.0, addr_deck,        &MQTT_DeckH,      &MQTT_Deck}; 
   TemperatureObj[1] = (SensorSet){"Lounge", 0.0, addr_lounge,      &MQTT_LoungeH,    &MQTT_Lounge};
   TemperatureObj[2] = (SensorSet){"Base",   0.0, addr_basestation, &MQTT_BaseStationH,&MQTT_BaseStation};
@@ -109,7 +109,7 @@ void setup(){
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
-    if(i>10) break;
+    if(i>20) break;
     i++;
   }
   // Start up the library
@@ -117,7 +117,7 @@ void setup(){
   temperatureSensors.begin();
   
   listDevices();
-  MQTT_connect();
+  //MQTT_connect();
   MQTT_connectH();
   printHeaders();
 }
@@ -129,7 +129,7 @@ void loop(){
     printHeaders();
     loopcount = 0;
   }
-  MQTT_connect();
+  //MQTT_connect();
   MQTT_connectH();
   //listDevices();
   doTemps();
@@ -179,7 +179,7 @@ void doTemps(void){
 void listDevices(void){
 
     // Grab a count of devices on the wire
-  Serial.println(F("DB: read no sensors..."));
+  Serial.println(F("DB: read no. of sensors..."));
   numberOfDevices = temperatureSensors.getDeviceCount();
   // locate devices on the bus
   Serial.print("\nLocating devices...");
@@ -219,7 +219,7 @@ void MQTT_connectH() {
 
   Serial.print("Connecting to MQTT at home... ");
 
-  uint8_t retries = 3;
+  uint8_t retries = 5;
   while ((ret = mqttH.connect()) != 0) { // connect will return 0 for connected
        Serial.println(mqttH.connectErrorString(ret));
        Serial.println("Retrying MQTT connection in 5 seconds...");
@@ -228,7 +228,7 @@ void MQTT_connectH() {
        retries--;
        if (retries == 0) {
          Serial.println("Reset..");
-         //ESP.restart();
+         ESP.restart();
        }
   }
   Serial.println("MQTT Home Connected!");

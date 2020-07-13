@@ -58,35 +58,35 @@ H2{
     </div>
     <div  class="row">
       <div class="column" >
-        <input type="radio" id="1h" name="timerange" value="temp60min.csv">
+        <input type="radio" id="1h" name="timerange" value="_60min">
         <label for="1h">Last 1 hour</label>
       </div>    
       <div class="column" >
-        <input type="radio" id="2h" name="timerange" value="temp2.csv">
+        <input type="radio" id="2h" name="timerange" value="_2hour">
         <label for="2h">Last 2 hours</label>
       </div>
       <div  class="column">
-        <input type="radio" id="6h" name="timerange" value="temp6.csv">
+        <input type="radio" id="6h" name="timerange" value="_6hour">
         <label for="6h">Last 6 hours</label>
       </div>
       <div  class="column">
-        <input type="radio" id="12h" name="timerange" value="temp12.csv">
+        <input type="radio" id="12h" name="timerange" value="_12hour">
         <label for="12h">Last 12 hours</label>
       </div>
       <div class="column">
-        <input type="radio" id="24h" name="timerange" value="temp24.csv" checked>
+        <input type="radio" id="24h" name="timerange" value="_24.csv" checked>
         <label for="24h">Last 24 hours</label>
       </div>
       <div class="column">
-        <input type="radio" id="48h" name="timerange" value="temp48.csv" >
+        <input type="radio" id="48h" name="timerange" value="_48hour" >
         <label for="48h">Last 48 hours</label>
       </div>
       <div class="column">
-        <input type="radio" id="7d" name="timerange" value="temp7d.csv" >
+        <input type="radio" id="7d" name="timerange" value="_7day">
         <label for="47d">Last 7 days</label>
       </div>
       <div class="column">
-        <input type="radio" id="all" name="timerange" value="temp.csv">
+        <input type="radio" id="all" name="timerange" value="_">
         <label for="all">All recorded temperature readings <br>(may take a long time to load)</label>
       </div>
     </div>
@@ -199,8 +199,7 @@ function updateGauges(temps) {
   //gaugeSoil.update();
 }  
 
-function makeChart(temps) { 
-  updateMap(temps);
+function makeChart() { 
   window.gaugeDeck = new Chart('gaugeDeck', {
   type: 'gauge',
   data: {
@@ -626,31 +625,44 @@ window.gaugeAir = new Chart('gaugeAir', {
 };
 
 // Request data using D3
-var defaultURL 	= 'https://fryett.net/HomeTemp/temp24.csv';
-var latestURL 	= 'https://fryett.net/HomeTemp/latest.csv';
-var fetchURL	= defaultURL;
+var defaultURL_Base 	= 'https://fryett.net/HomeTemp/temp';
+var latestURL_Base 	= 'https://fryett.net/HomeTemp/latest';
+var DallasArray = ['Deck',
+                  'Base',
+                  'Air',
+                  'Ground_30',
+                  'BedC',   
+                  'BedI',
+                  'BedM',
+                  'Ceiling',
+                  'Lounge'];
 
-d3.csv(defaultURL).then(makeChart);
+for(i=0; i < DallasArray.length; i++){  
+  d3.csv(defaultURL_Base + '_24hour_' + DallasArray[i]).then(updateMap);
+}
+makeChart();
 
 var upTimer = 120000;
 		
 d3.selectAll(("input[name='timerange']")).on("change", function(){ //set timer on plot range change
-        fetchURL = 'https://fryett.net/HomeTemp/' + this.value;
         //console.log(fetchURL);
         
-        d3.csv(fetchURL).then(updateCharts);
-        d3.csv(latestURL).then(updateGauges);
+        for(i=0; i < DallasArray.length; i++){  
+          d3.csv(defaultURL_Base + this.value + '_' + DallasArray[i]).then(updateMap);
+          d3.csv(latestURL_Base  + this.value + '_' + DallasArray[i]).then(updateGauges);
+        }
+        updateCharts();
         switch (this.value) {
-            case "temp.csv":
+            case "_":
                 upTimer = 600000; //10min update on charts for all time points
                 break;
-            case "temp7d.csv":
+            case "_7day":
                 upTimer = 300000; //5min update on 7d charts
                 break;
-            case "temp60min.csv":
+            case "_60min.csv":
                 upTimer = 60000; //60sec update on 1h charts
                 break;
-            case "temp2.csv":
+            case "_2hour":
                 upTimer = 60000; //60sec update on 2h charts
                 break;
             default:
@@ -660,16 +672,24 @@ d3.selectAll(("input[name='timerange']")).on("change", function(){ //set timer o
         clearInterval(interG); //clear timer for Gauges
         
         interC = setInterval(function() {
-                d3.csv(fetchURL).then(updateCharts);
+          for(i=0; i < DallasArray.length; i++){  
+            d3.csv(defaultURL_Base + this.value + '_' + DallasArray[i]).then(updateMap);
+          }
+          updateCharts();
         }, upTimer);
     });
 		
 var interC = setInterval(function() {
-        d3.csv(fetchURL).then(updateCharts);
-    }, upTimer);
+    for(i=0; i < DallasArray.length; i++){  
+      d3.csv(defaultURL_Base + this.value + '_' + DallasArray[i]).then(updateMap);
+    };
+    updateCharts();
+  }, upTimer);
 
 var interG = setInterval(function() {
-        d3.csv(latestURL).then(updateGauges);
+    for(i=0; i < DallasArray.length; i++){  
+          d3.csv(latestURL_Base  + this.value + '_' + DallasArray[i]).then(updateGauges);
+      }
     }, 30000);
 		
     </script>

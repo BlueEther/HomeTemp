@@ -638,7 +638,7 @@ var DallasArray = ['Deck',
                   'Lounge'];
 
 for(i=0; i < DallasArray.length; i++){  
-  d3.csv(defaultURL_Base + '_24hour_' + DallasArray[i]).then(updateMap) + '.csv';
+  d3.csv(defaultURL_Base + '_24hour_' + DallasArray[i] + '.csv').then(updateMap);
 }
 makeChart();
 
@@ -648,8 +648,8 @@ d3.selectAll(("input[name='timerange']")).on("change", function(){ //set timer o
         //console.log(fetchURL);
         
         for(i=0; i < DallasArray.length; i++){  
-          d3.csv(defaultURL_Base + this.value + '_' + DallasArray[i]).then(updateMap) + '.csv';
-          d3.csv(latestURL_Base  + this.value + '_' + DallasArray[i]).then(updateGauges) + '.csv';
+          d3.csv(defaultURL_Base + this.value + '_' + DallasArray[i] + '.csv').then(updateMap);
+          d3.csv(latestURL_Base  + this.value + '_' + DallasArray[i] + '.csv').then(updateGauges);
         }
         updateCharts();
         switch (this.value) {
@@ -673,7 +673,7 @@ d3.selectAll(("input[name='timerange']")).on("change", function(){ //set timer o
         
         interC = setInterval(function() {
           for(i=0; i < DallasArray.length; i++){  
-            d3.csv(defaultURL_Base + this.value + '_' + DallasArray[i]).then(updateMap) + '.csv';
+            d3.csv(defaultURL_Base + this.value + '_' + DallasArray[i] + '.csv').then(updateMap);
           }
           updateCharts();
         }, upTimer);
@@ -681,14 +681,14 @@ d3.selectAll(("input[name='timerange']")).on("change", function(){ //set timer o
 		
 var interC = setInterval(function() {
     for(i=0; i < DallasArray.length; i++){  
-      d3.csv(defaultURL_Base + this.value + '_' + DallasArray[i]).then(updateMap) + '.csv';
+      d3.csv(defaultURL_Base + this.value + '_' + DallasArray[i] + '.csv').then(updateMap);
     };
     updateCharts();
   }, upTimer);
 
 var interG = setInterval(function() {
     for(i=0; i < DallasArray.length; i++){  
-          d3.csv(latestURL_Base  + this.value + '_' + DallasArray[i]).then(updateGauges) + '.csv';
+          d3.csv(latestURL_Base  + this.value + '_' + DallasArray[i] + '.csv').then(updateGauges);
       }
     }, 30000);
 		

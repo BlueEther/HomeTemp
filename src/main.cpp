@@ -2,8 +2,11 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 #include <ESP8266WiFi.h>
+#include <WiFiUdp.h>
 #include "Adafruit_MQTT.h"
 #include "Adafruit_MQTT_Client.h"
+#include <TimeLib.h>
+#include <String.h>
 
 //const char* Ver = "3.0";          //Build Version
 //const char* VerDate = "22/05/2020";          //Duild Date
@@ -14,7 +17,7 @@ DallasTemperature temperatureSensors(&oneWire);
 int numberOfDevices;
 DeviceAddress tempDeviceAddress; 
 
-const char* Hssid     = "BlueEther Tech";       // ERASE prior to publishing
+const char* Hssid     = "BlueEther_Tech_2G";       // ERASE prior to publishing
 const char* Hpassword = "iwillnotgiveyoumykey";    //   "" ditto
 
 
@@ -25,6 +28,18 @@ const char* Hpassword = "iwillnotgiveyoumykey";    //   "" ditto
 
 #define AIO_SERVER_H      "10.1.1.56"
 #define AIO_SERVERPORT_H  1883
+
+unsigned int localPort = 2390;      // local port to listen for UDP packets
+
+IPAddress timeServerIP; // pool.ntp.org NTP server address
+const char* ntpServerName = "pool.ntp.org";
+const int timeZone = 0;     // UTC
+String strTimeStamp;
+String strMQTT;
+
+
+// A UDP instance to let us send and receive packets over UDP
+WiFiUDP Udp;
 
 // Create an ESP8266 WiFiClient class to connect to the MQTT server.
 WiFiClient client;
@@ -56,6 +71,7 @@ Adafruit_MQTT_Publish MQTT_Bed_MasterH= Adafruit_MQTT_Publish(&mqttH, "feeds/bed
 Adafruit_MQTT_Publish MQTT_CeilingH   = Adafruit_MQTT_Publish(&mqttH, "feeds/ceiling");
 Adafruit_MQTT_Publish MQTT_BasementH  = Adafruit_MQTT_Publish(&mqttH, "feeds/basement");
 Adafruit_MQTT_Publish MQTT_KitchenH   = Adafruit_MQTT_Publish(&mqttH, "feeds/kitchen");
+Adafruit_MQTT_Publish MQTT_ALL        = Adafruit_MQTT_Publish(&mqttH, "feeds/ALL");
 
 
 DeviceAddress addr_basestation= {0x28, 0xFF, 0x34, 0xDD, 0x80, 0x16, 0x03, 0x89};   //0
@@ -86,12 +102,17 @@ void MQTT_connectH();
 void doTemps(void);
 void printHeaders(void);
 
+time_t getNtpTime();
+void digitalClockDisplay();
+String printDigits(int digits);
+void sendNTPpacket(IPAddress &address);
+
 void setup(){
   Serial.begin(115200);
+   delay (5000);
   Serial.println(F("Home Temp Monitor."));
   //CSV Format:
   //Time	 Deck	 Lounge	 BaseStation	 Ground_air	 Ground_30cm	Bed_Cady	Bed_Ismay	Bed_Master	Ceiling Basement
-  delay (1000);
   TemperatureObj[0] = (SensorSet){"Deck",   0.0, addr_deck,        &MQTT_DeckH,      &MQTT_Deck}; 
   TemperatureObj[1] = (SensorSet){"Lounge", 0.0, addr_lounge,      &MQTT_LoungeH,    &MQTT_Lounge};
   TemperatureObj[2] = (SensorSet){"Base",   0.0, addr_basestation, &MQTT_BaseStationH,&MQTT_BaseStation};
@@ -106,35 +127,56 @@ void setup(){
   WiFi.begin(Hssid, Hpassword);
 
   int i = 0;
+  Serial.print("Connecting to ");
+  Serial.println(Hssid);
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
-    Serial.print(".");
-    if(i>10) break;
+    Serial.println(i);
+    //if(i>10) break;
     i++;
   }
-  // Start up the library
+  
+  Serial.println("WiFi connected");
+  Serial.println("IP address: ");
+  Serial.println(WiFi.localIP());
+
+  Serial.println("Starting UDP");
+  Udp.begin(localPort);
+  Serial.print("Local port: ");
+  Serial.println(Udp.localPort());
+  
+  Serial.println("waiting for sync");
+  setSyncProvider(getNtpTime);
+  setSyncInterval(300);
+
+  // Start Dallas up the library
   
   temperatureSensors.begin();
   
   listDevices();
-  MQTT_connect();
+  //MQTT_connect();
   MQTT_connectH();
   printHeaders();
 }
 
+time_t prevDisplay = 0; // when the digital clock was displayed
 int loopcount = 0;
-void loop(){ 
-  if(loopcount<10) loopcount++;
-  else {
-    printHeaders();
-    loopcount = 0;
+void loop(){  
+  if (timeStatus() != timeNotSet) {
+    if (now() >= prevDisplay+30) { //update the display only if time has changed
+      prevDisplay = now();
+      digitalClockDisplay();
+      if(loopcount<10) loopcount++;
+      else {
+        printHeaders();
+        loopcount = 0;
+      }
+      //MQTT_connect();
+      MQTT_connectH();
+      //listDevices();
+      doTemps();
+    }
   }
-  MQTT_connect();
-  MQTT_connectH();
-  //listDevices();
-  doTemps();
-
-  delay(30000);
 }
 
 // Print headers on serial
@@ -164,22 +206,28 @@ void printAddress(DeviceAddress &deviceAddress) {
 
 void doTemps(void){
   temperatureSensors.requestTemperatures(); // Send the command to get temperatures
- 
+  strMQTT = strTimeStamp;
   for (int i=0; i < no_sensors; i++) {
     TemperatureObj[i].degC = temperatureSensors.getTempC(TemperatureObj[i].DevID);
     if (TemperatureObj[i].degC == -127.00) TemperatureObj[i].degC  = 0;
     Serial.print(TemperatureObj[i].degC);
     Serial.print("\t");
-    TemperatureObj[i].MQTT_Ada->publish(TemperatureObj[i].degC);
+    strMQTT += ",";
+    strMQTT += TemperatureObj[i].degC;
+    //TemperatureObj[i].MQTT_Ada->publish(TemperatureObj[i].degC);
     TemperatureObj[i].MQTT_Home->publish(TemperatureObj[i].degC);
   }
+
   Serial.println();
+  //Serial.println(strMQTT);
+   const char* buf = strMQTT.c_str();
+  MQTT_ALL.publish(buf);
 }
 
 void listDevices(void){
 
     // Grab a count of devices on the wire
-  Serial.println(F("DB: read no sensors..."));
+  Serial.println(F("DB: read no. of sensors..."));
   numberOfDevices = temperatureSensors.getDeviceCount();
   // locate devices on the bus
   Serial.print("\nLocating devices...");
@@ -228,7 +276,7 @@ void MQTT_connectH() {
        retries--;
        if (retries == 0) {
          Serial.println("Reset..");
-         //ESP.restart();
+         ESP.restart();
        }
   }
   Serial.println("MQTT Home Connected!");
@@ -260,4 +308,88 @@ void MQTT_connect() {
 }
 
 
+void digitalClockDisplay()
+{
+  // digital clock display of the time
+  strTimeStamp = year();
+  strTimeStamp += "-";
+  strTimeStamp += printDigits(month());
+  strTimeStamp += "-";
+  strTimeStamp += printDigits(day());
+  strTimeStamp += "T";
+  strTimeStamp += printDigits(hour());
+  strTimeStamp += ":";
+  strTimeStamp +=printDigits(minute());
+  strTimeStamp += ":";
+  strTimeStamp +=printDigits(second());
+  strTimeStamp += "Z";
+  //Serial.println(strTimeStamp);
+}
 
+String printDigits(int digits)
+{
+  String s = "";
+  if (digits < 10)
+    s = '0';
+  s += digits;
+  return s;
+}
+
+/*-------- NTP code ----------*/
+
+const int NTP_PACKET_SIZE = 48; // NTP time is in the first 48 bytes of message
+byte packetBuffer[NTP_PACKET_SIZE]; //buffer to hold incoming & outgoing packets
+
+time_t getNtpTime()
+{
+  IPAddress ntpServerIP; // NTP server's ip address
+
+  while (Udp.parsePacket() > 0) ; // discard any previously received packets
+  Serial.println("Transmit NTP Request");
+  // get a random server from the pool
+  WiFi.hostByName(ntpServerName, ntpServerIP);
+  Serial.print(ntpServerName);
+  Serial.print(": ");
+  Serial.println(ntpServerIP);
+  sendNTPpacket(ntpServerIP);
+  uint32_t beginWait = millis();
+  while (millis() - beginWait < 1500) {
+    int size = Udp.parsePacket();
+    if (size >= NTP_PACKET_SIZE) {
+      Serial.println("Receive NTP Response");
+      Udp.read(packetBuffer, NTP_PACKET_SIZE);  // read packet into the buffer
+      unsigned long secsSince1900;
+      // convert four bytes starting at location 40 to a long integer
+      secsSince1900 =  (unsigned long)packetBuffer[40] << 24;
+      secsSince1900 |= (unsigned long)packetBuffer[41] << 16;
+      secsSince1900 |= (unsigned long)packetBuffer[42] << 8;
+      secsSince1900 |= (unsigned long)packetBuffer[43];
+      return secsSince1900 - 2208988800UL + timeZone * SECS_PER_HOUR;
+    }
+  }
+  Serial.println("No NTP Response :-(");
+  return 0; // return 0 if unable to get the time
+}
+
+// send an NTP request to the time server at the given address
+void sendNTPpacket(IPAddress &address)
+{
+  // set all bytes in the buffer to 0
+  memset(packetBuffer, 0, NTP_PACKET_SIZE);
+  // Initialize values needed to form NTP request
+  // (see URL above for details on the packets)
+  packetBuffer[0] = 0b11100011;   // LI, Version, Mode
+  packetBuffer[1] = 0;     // Stratum, or type of clock
+  packetBuffer[2] = 6;     // Polling Interval
+  packetBuffer[3] = 0xEC;  // Peer Clock Precision
+  // 8 bytes of zero for Root Delay & Root Dispersion
+  packetBuffer[12] = 49;
+  packetBuffer[13] = 0x4E;
+  packetBuffer[14] = 49;
+  packetBuffer[15] = 52;
+  // all NTP fields have been given values, now
+  // you can send a packet requesting a timestamp:
+  Udp.beginPacket(address, 123); //NTP requests are to port 123
+  Udp.write(packetBuffer, NTP_PACKET_SIZE);
+  Udp.endPacket();
+}

@@ -8,8 +8,8 @@
 #include <TimeLib.h>
 #include <String.h>
 
-//const char* Ver = "3.0";          //Build Version
-//const char* VerDate = "22/05/2020";          //Duild Date
+//const char* Ver = "4.0";          //Build Version
+//const char* VerDate = "19/07/2020";          //Duild Date
 
 #define OWPin D4
 OneWire oneWire(OWPin);

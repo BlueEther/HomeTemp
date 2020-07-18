@@ -8,7 +8,7 @@
 #include <TimeLib.h>
 #include <String.h>
 
-//const char* Ver = "4.2";          //Build Version
+//const char* Ver = "4.3";          //Build Version
 //const char* VerDate = "19/07/2020";          //Duild Date
 
 #define OWPin D4

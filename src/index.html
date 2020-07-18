@@ -118,6 +118,28 @@ var temp20_25c = 'rgba(205, 220, 57, .1)';
 var temp25_30c = 'rgba(255, 193, 7, .1)';
 var temp30_35c = 'rgba(255, 87, 34, .1)';
 
+window.timeStamp = 0;
+window.DeckTemp = 0;
+window.BaseTemp = 0;
+window.G_aTemp = 0;
+window.G_30Temp = 0;
+window.BedCTemp = 0;  
+window.BedITemp = 0;
+window.BedMTemp = 0;
+window.CeilingTemp = 0;
+window.LoungeTemp = 0;
+
+window.lastDeck = 0.0;
+window.lastBase = 0.0;
+window.lastAir = 0.0;
+window.lastSoil = 0.0;
+window.lastBC = 0.0;
+window.lastBI = 0.0;
+window.lastBM = 0.0;
+window.lastCeiling = 0.0;
+window.lastLounge = 0.0;
+window.lastTime = 0;
+
 function updateMap(temps){
   window.timeStamp 		= temps.map(function(d) {return d.Time});
   window.DeckTemp 		= temps.map(function(d) {return +d.Deck});
@@ -637,9 +659,10 @@ var DallasArray = ['Deck',
                   'Ceiling',
                   'Lounge'];
 
-for(i=0; i < DallasArray.length; i++){  
-  d3.csv(defaultURL_Base + '_24hour_' + DallasArray[i] + '.csv').then(updateMap);
-}
+//for(i=0; i < DallasArray.length; i++){  
+  //d3.csv(defaultURL_Base + '_24hour_' + DallasArray[i] + '.csv').then(updateMap);
+  d3.csv(defaultURL_Base + '.csv').then(updateMap);
+//}
 makeChart();
 
 var upTimer = 120000;
@@ -649,7 +672,7 @@ d3.selectAll(("input[name='timerange']")).on("change", function(){ //set timer o
         
         for(i=0; i < DallasArray.length; i++){  
           d3.csv(defaultURL_Base + this.value + '_' + DallasArray[i] + '.csv').then(updateMap);
-          d3.csv(latestURL_Base  + this.value + '_' + DallasArray[i] + '.csv').then(updateGauges);
+          //d3.csv(latestURL_Base  + this.value + '_' + DallasArray[i] + '.csv').then(updateGauges);
         }
         updateCharts();
         switch (this.value) {
